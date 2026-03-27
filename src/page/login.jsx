@@ -14,7 +14,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import SchoolIcon from '@mui/icons-material/School';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
-// Importamos nuestro archivo de estilos centralizado
 import { sigeStyles } from '../styles/sigeStyles';
 
 export default function Login() {
@@ -39,12 +38,10 @@ export default function Login() {
         console.log('Login Submit:', { role, ...formData });
     };
 
-    // Declaramos la fuente para inyectarla fácilmente en las propiedades sx
     const fontText = '"Montserrat", sans-serif';
 
     return (
         <Box sx={sigeStyles.pageContainer}>
-            {/* Header */}
             <Box sx={sigeStyles.header}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <SchoolIcon sx={{ fontSize: 40 }} />
@@ -59,8 +56,6 @@ export default function Login() {
                 </Box>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', fontFamily: fontText }}>SIGE</Typography>
             </Box>
-
-            {/* Main Content */}
             <Box sx={sigeStyles.mainContent}>
                 <Card sx={{ ...sigeStyles.authCard, maxWidth: 450 }}>
                     <CardContent sx={{ p: 4 }}>
@@ -135,8 +130,6 @@ export default function Login() {
                             >
                                 Iniciar Sesión
                             </Button>
-
-                            {/* Enlaces de navegación con React Router */}
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 3, gap: 1.5 }}>
                                 <MuiLink href="#" underline="hover" sx={{ color: 'text.secondary', fontSize: '0.875rem', fontFamily: fontText }}>
                                     ¿Olvidaste tu contraseña?
@@ -144,16 +137,11 @@ export default function Login() {
                                 <MuiLink component={RouterLink} to="/registro/estudiante" underline="hover" sx={{ color: '#00897b', fontWeight: 500, fontSize: '0.875rem', fontFamily: fontText }}>
                                     ¿Eres de nuevo ingreso? Regístrate como Estudiante
                                 </MuiLink>
-                                <MuiLink component={RouterLink} to="/registro/docente" underline="hover" sx={{ color: '#00897b', fontWeight: 500, fontSize: '0.875rem', fontFamily: fontText }}>
-                                    Registro de personal Docente
-                                </MuiLink>
                             </Box>
                         </form>
                     </CardContent>
                 </Card>
             </Box>
-
-            {/* Footer */}
             <Box sx={{ py: 3, textAlign: 'center', color: 'text.secondary', position: 'relative' }}>
                 <Typography variant="body2" sx={{ fontFamily: fontText }}>Universidad Tecnológica de la Sierra Hidalguense</Typography>
                 <Typography variant="body2" sx={{ fontFamily: fontText }}>Sistema Integral de Gestión Educativa</Typography>
