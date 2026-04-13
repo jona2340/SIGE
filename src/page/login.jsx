@@ -10,7 +10,8 @@ import {
     ToggleButtonGroup,
     Link as MuiLink
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+// Importamos useNavigate para poder hacer las redirecciones automáticas
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import SchoolIcon from '@mui/icons-material/School';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
@@ -23,7 +24,11 @@ export default function Login() {
         password: ''
     });
 
+    // Inicializamos el hook de navegación
+    const navigate = useNavigate();
+
     const handleRoleChange = (event, newRole) => {
+        // Evita que el usuario deseleccione todos los botones
         if (newRole !== null) {
             setRole(newRole);
         }
@@ -36,9 +41,30 @@ export default function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Login Submit:', { role, ...formData });
+
+        // Lógica de redirección según el rol seleccionado
+        if (role === 'estudiante') {
+            navigate('/dashboard/estudiante');
+        } else if (role === 'docente') {
+            navigate('/dashboard/docente');
+        } else if (role === 'admin') {
+            navigate('/dashboard/admin');
+        }
     };
 
     const fontText = '"Montserrat", sans-serif';
+
+    // Estilo base para los ToggleButtons (para no repetir código)
+    const toggleButtonStyle = {
+        textTransform: 'none',
+        fontWeight: 'bold',
+        fontFamily: fontText,
+        '&.Mui-selected': {
+            bgcolor: '#1e1e2d',
+            color: 'white',
+            '&:hover': { bgcolor: '#2c2c3f' }
+        }
+    };
 
     return (
         <Box sx={sigeStyles.pageContainer}>
@@ -68,6 +94,8 @@ export default function Login() {
                             <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'block', mb: 1, fontFamily: fontText }}>
                                 Tipo de Usuario
                             </Typography>
+
+                            {/* Selector de 3 Roles */}
                             <ToggleButtonGroup
                                 value={role}
                                 exclusive
@@ -75,27 +103,14 @@ export default function Login() {
                                 fullWidth
                                 sx={{ mb: 3, height: '40px' }}
                             >
-                                <ToggleButton
-                                    value="estudiante"
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontWeight: 'bold',
-                                        fontFamily: fontText,
-                                        '&.Mui-selected': { bgcolor: '#1e1e2d', color: 'white', '&:hover': { bgcolor: '#2c2c3f' } }
-                                    }}
-                                >
+                                <ToggleButton value="estudiante" sx={toggleButtonStyle}>
                                     Estudiante
                                 </ToggleButton>
-                                <ToggleButton
-                                    value="docente"
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontWeight: 'bold',
-                                        fontFamily: fontText,
-                                        '&.Mui-selected': { bgcolor: '#1e1e2d', color: 'white', '&:hover': { bgcolor: '#2c2c3f' } }
-                                    }}
-                                >
+                                <ToggleButton value="docente" sx={toggleButtonStyle}>
                                     Docente
+                                </ToggleButton>
+                                <ToggleButton value="admin" sx={toggleButtonStyle}>
+                                    Admin
                                 </ToggleButton>
                             </ToggleButtonGroup>
 
@@ -130,14 +145,6 @@ export default function Login() {
                             >
                                 Iniciar Sesión
                             </Button>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 3, gap: 1.5 }}>
-                                <MuiLink href="#" underline="hover" sx={{ color: 'text.secondary', fontSize: '0.875rem', fontFamily: fontText }}>
-                                    ¿Olvidaste tu contraseña?
-                                </MuiLink>
-                                <MuiLink component={RouterLink} to="/registro/estudiante" underline="hover" sx={{ color: '#00897b', fontWeight: 500, fontSize: '0.875rem', fontFamily: fontText }}>
-                                    ¿Eres de nuevo ingreso? Regístrate como Estudiante
-                                </MuiLink>
-                            </Box>
                         </form>
                     </CardContent>
                 </Card>
