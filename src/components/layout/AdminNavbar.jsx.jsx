@@ -1,71 +1,113 @@
 import React, { useState } from 'react';
 import {
-    AppBar, Toolbar, IconButton, Typography, Avatar, Box, Badge, Menu, MenuItem,
-    ListItemIcon, Divider
+    AppBar, Toolbar, IconButton, Typography, Avatar, Box, Badge,
+    Menu, MenuItem, ListItemIcon, Divider, Tooltip
 } from '@mui/material';
-
-// Íconos
+import { useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import { logoutUser, getStoredUser } from '../../service/authService';
 
-export default function AdminNavbar({ handleDrawerToggle, onOpenModal, drawerWidth = 260 }) {
-    const [anchorElProfile, setAnchorElProfile] = useState(null);
-    const [anchorElAdd, setAnchorElAdd] = useState(null);
+const fontText = '"Montserrat", sans-serif';
 
-    const fontText = '"Montserrat", sans-serif';
+// Botón de navegación reutilizable para el Navbar
+function NavTab({ label, icon, path, active, onClick }) {
+    return (
+        <Box onClick={onClick} sx={{
+            display: 'flex', alignItems: 'center', gap: 0.8, cursor: 'pointer',
+            px: 1.8, py: 0.8, borderRadius: 2,
+            bgcolor: active ? 'rgba(25, 118, 210, 0.1)' : 'transparent',
+            borderBottom: active ? '2px solid #1976d2' : '2px solid transparent',
+            transition: 'all 0.15s ease',
+            '&:hover': { bgcolor: 'rgba(25, 118, 210, 0.07)' },
+        }}>
+            {React.cloneElement(icon, { sx: { fontSize: 18, color: active ? '#1976d2' : '#888' } })}
+            <Typography sx={{
+                fontFamily: fontText, fontSize: '0.82rem',
+                fontWeight: active ? 700 : 500,
+                color: active ? '#1976d2' : '#666',
+            }}>
+                {label}
+            </Typography>
+        </Box>
+    );
+}
 
-    const handleProfileClick = (event) => setAnchorElProfile(event.currentTarget);
-    const handleProfileClose = () => setAnchorElProfile(null);
+export default function AdminNavbar({ handleDrawerToggle, drawerWidth = 260 }) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const adminUser = getStoredUser();
 
-    const handleAddClick = (event) => setAnchorElAdd(event.currentTarget);
-    const handleAddClose = () => setAnchorElAdd(null);
-
-    // Función que cierra este menú y le avisa al Dashboard que abra el modal
-    const handleTriggerModal = (rol) => {
-        handleAddClose();
-        if (onOpenModal) onOpenModal(rol);
-    };
+    const isActive = (path) => location.pathname === path;
 
     return (
-        <AppBar position="fixed" sx={{ width: { sm: `calc(100% - ${drawerWidth}px)` }, ml: { sm: `${drawerWidth}px` }, bgcolor: 'white', color: '#333', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-            <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <AppBar position="fixed" sx={{
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
+            bgcolor: 'white',
+            color: '#333',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+        }}>
+            <Toolbar sx={{ justifyContent: 'space-between', minHeight: { sm: '64px' } }}>
 
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: 'none' }, color: '#1976d2' }}>
+                {/* Izquierda: menú hamburguesa + tabs de navegación */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton color="inherit" edge="start" onClick={handleDrawerToggle}
+                        sx={{ mr: 1, display: { sm: 'none' }, color: '#1976d2' }}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div" sx={{ fontFamily: fontText, fontWeight: 600, display: { xs: 'none', sm: 'block' } }}>
-                        Panel de Administración
-                    </Typography>
+
+                    {/* Tabs de navegación — visibles en sm+ */}
+                    <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 0.5 }}>
+                        <NavTab
+                            label="Dashboard"
+                            icon={<DashboardIcon />}
+                            active={isActive('/dashboard/admin')}
+                            onClick={() => navigate('/dashboard/admin')}
+                        />
+                        <NavTab
+                            label="Gestión de Usuarios"
+                            icon={<PeopleAltIcon />}
+                            active={isActive('/admin/usuarios')}
+                            onClick={() => navigate('/admin/usuarios')}
+                        />
+                    </Box>
                 </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+                {/* Derecha: notificaciones + perfil */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Tooltip title="Notificaciones">
+                        <IconButton sx={{ color: '#666' }}>
+                            <Badge badgeContent={3} color="warning">
+                                <NotificationsIcon />
+                            </Badge>
+                        </IconButton>
+                    </Tooltip>
 
-
-                    {/* Campana y Perfil */}
-                    <IconButton sx={{ color: '#666' }}>
-                        <Badge badgeContent={12} color="warning"><NotificationsIcon /></Badge>
-                    </IconButton>
-
-                    <Box onClick={handleProfileClick} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer', padding: '4px 8px', borderRadius: '8px', '&:hover': { bgcolor: '#f3f4f6' } }}>
+                    <Box onClick={e => setAnchorEl(e.currentTarget)} sx={{
+                        display: 'flex', alignItems: 'center', gap: 1.5,
+                        cursor: 'pointer', px: 1.5, py: 0.8, borderRadius: 2,
+                        '&:hover': { bgcolor: '#f3f4f6' },
+                    }}>
                         <Box sx={{ textAlign: 'right', display: { xs: 'none', md: 'block' } }}>
-                            <Typography variant="body2" sx={{ fontFamily: fontText, fontWeight: 600, color: '#333', lineHeight: 1.2 }}>Admin. General</Typography>
-                            <Typography variant="caption" sx={{ fontFamily: fontText, color: '#1976d2', fontWeight: 500 }}>Super Admin</Typography>
+                            <Typography variant="body2" sx={{ fontFamily: fontText, fontWeight: 600, color: '#333', lineHeight: 1.2, fontSize: '0.82rem' }}>
+                                {adminUser?.nombre?.split(' ')[0] || 'Admin'}
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontFamily: fontText, color: '#1976d2', fontWeight: 600 }}>
+                                Super Admin
+                            </Typography>
                         </Box>
-                        <Avatar sx={{ bgcolor: '#1976d2', width: 38, height: 38 }}><AdminPanelSettingsIcon fontSize="small" /></Avatar>
+                        <Avatar sx={{ bgcolor: '#1976d2', width: 36, height: 36 }}>
+                            <AdminPanelSettingsIcon fontSize="small" />
+                        </Avatar>
                     </Box>
-
-                    <Menu anchorEl={anchorElProfile} open={Boolean(anchorElProfile)} onClose={handleProfileClose} PaperProps={{ elevation: 0, sx: { overflow: 'visible', filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))', mt: 1.5, minWidth: 200, borderRadius: 2 } }} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-                        <MenuItem sx={{ fontFamily: fontText }}><ListItemIcon><PersonIcon fontSize="small" sx={{ color: '#1976d2' }} /></ListItemIcon>Mi Perfil</MenuItem>
-                        <MenuItem sx={{ fontFamily: fontText }}><ListItemIcon><SettingsIcon fontSize="small" sx={{ color: '#666' }} /></ListItemIcon>Ajustes del Sistema</MenuItem>
-                        <Divider />
-                        <MenuItem sx={{ fontFamily: fontText, color: '#d32f2f' }}><ListItemIcon><LogoutIcon fontSize="small" sx={{ color: '#d32f2f' }} /></ListItemIcon>Cerrar Sesión</MenuItem>
-                    </Menu>
                 </Box>
             </Toolbar>
         </AppBar>

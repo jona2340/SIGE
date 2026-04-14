@@ -196,13 +196,6 @@ export default function DashboardAdmin() {
     const totalDocentes = usuarios.filter(u => u.rol === 'TEACHER').length;
     const totalAdmins = usuarios.filter(u => u.rol === 'ADMIN').length;
 
-    const menuItems = [
-        { text: 'Resumen Global', icon: <DashboardIcon />, active: true },
-        { text: 'Control de Usuarios', icon: <PeopleIcon /> },
-        { text: 'Programas Educativos', icon: <SchoolIcon /> },
-        { text: 'Reportes del Sistema', icon: <AssessmentIcon /> },
-        { text: 'Configuración', icon: <SettingsIcon /> },
-    ];
 
     const drawerContent = (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#111827', color: 'white' }}>
@@ -212,14 +205,6 @@ export default function DashboardAdmin() {
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
             <List sx={{ flexGrow: 1, px: 2, mt: 2 }}>
-                {menuItems.map((item) => (
-                    <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton sx={{ borderRadius: 2, bgcolor: item.active ? 'rgba(25, 118, 210, 0.15)' : 'transparent', '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' } }}>
-                            <ListItemIcon sx={{ color: item.active ? '#42a5f5' : '#aaa', minWidth: 40 }}>{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.text} primaryTypographyProps={{ fontFamily: fontText, fontWeight: item.active ? 600 : 400, color: item.active ? 'white' : '#ccc' }} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
             </List>
             <Box sx={{ p: 2 }}>
                 <ListItemButton onClick={logoutUser} sx={{ borderRadius: 2, bgcolor: 'rgba(211, 47, 47, 0.1)', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.2)' } }}>

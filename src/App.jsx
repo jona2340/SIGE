@@ -6,6 +6,7 @@ import DashboardEstudiante from './page/dashboard.student';
 import DashboardDocente from './page/dashboard.docent';
 import DashboardAdmin from './page/dashboard.admin';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import GestionUsuarios from './page/admin/GestionUsuarios';
 
 export default function App() {
   return (
@@ -39,6 +40,14 @@ export default function App() {
         element={
           <ProtectedRoute allowedRol="ADMIN">
             <DashboardAdmin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/usuarios"
+        element={
+          <ProtectedRoute allowedRol="ADMIN">
+            <GestionUsuarios />
           </ProtectedRoute>
         }
       />

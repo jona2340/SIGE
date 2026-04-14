@@ -6,7 +6,7 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: [true, 'La carrera es obligatoria'],
         // Carreras representativas de la UTSH
-        enum: ['Tecnologías de la Información', 'Mecatrónica', 'Desarrollo de Negocios', 'Contaduría', 'Enfermería', 'Terapia Física', 'Diseño Textil', 'Recursos Naturales'],
+        enum: ['Tecnologías de la Información', 'Mecatrónica', 'Desarrollo de Negocios', 'Contaduría', 'Enfermería', 'Terapia Física', 'Diseño Textil', 'Recursos Naturales', 'Mantenimiento Industrial'],
     },
     area: {
         type: String,
