@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box, Drawer, Typography, List, ListItem, ListItemButton, ListItemIcon,
-    ListItemText, Divider, Grid, Card, CardContent, Button, Skeleton
+    ListItemText, Divider, Grid, Card, CardContent, Button, Skeleton, Avatar
 } from '@mui/material';
 import DocentNavbar from '../components/layout/DocentNavbar';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -14,6 +14,7 @@ import { getStoredUser, logoutUser } from '../service/authService';
 
 const drawerWidth = 260;
 const fontText = '"Montserrat", sans-serif';
+const accentColor = '#42a5f5'; // color acento del docente
 
 export default function DashboardDocente() {
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -26,20 +27,24 @@ export default function DashboardDocente() {
 
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
-    const menuItems = [
-        { text: 'Inicio', icon: <DashboardIcon />, active: true },
-        { text: 'Mis Grupos', icon: <GroupsIcon /> },
-        { text: 'Calificaciones', icon: <AssignmentIcon /> },
-        { text: 'Asistencias', icon: <FactCheckIcon /> },
-    ];
+
 
     const drawerContent = (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#1e1e2d', color: 'white' }}>
-            <Box sx={{ p: 3, textAlign: 'center' }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', fontFamily: fontText, letterSpacing: 1 }}>
+            <Box sx={{ p: 3, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', fontFamily: fontText, letterSpacing: 1, mb: 2 }}>
                     SIGE UTSH
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#42a5f5', fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>
+
+                {/* Foto de perfil en el menú lateral */}
+                <Avatar
+                    src={user?.fotoPerfil || undefined}
+                    sx={{ width: 80, height: 80, border: `3px solid ${accentColor}`, mb: 1, bgcolor: accentColor }}
+                >
+                    {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
+                </Avatar>
+
+                <Typography variant="body2" sx={{ color: accentColor, fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>
                     {user?.nombre || 'Cargando...'}
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#aaa', fontFamily: fontText }}>
@@ -48,29 +53,16 @@ export default function DashboardDocente() {
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
             <List sx={{ flexGrow: 1, px: 2, mt: 2 }}>
-                {menuItems.map((item) => (
-                    <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton sx={{
-                            borderRadius: 2,
-                            bgcolor: item.active ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' }
-                        }}>
-                            <ListItemIcon sx={{ color: item.active ? 'white' : '#aaa', minWidth: 40 }}>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.text}
-                                primaryTypographyProps={{ fontFamily: fontText, fontWeight: item.active ? 600 : 400, color: item.active ? 'white' : '#ccc' }} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
             </List>
             <Box sx={{ p: 2 }}>
                 <ListItemButton
                     onClick={logoutUser}
                     sx={{ borderRadius: 2, bgcolor: 'rgba(211, 47, 47, 0.1)', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.2)' } }}>
                     <ListItemIcon sx={{ color: '#ef5350', minWidth: 40 }}><LogoutIcon /></ListItemIcon>
-                    <ListItemText primary="Cerrar Sesión"
-                        primaryTypographyProps={{ fontFamily: fontText, color: '#ef5350', fontWeight: 500 }} />
+                    <ListItemText
+                        primary="Cerrar Sesión"
+                        primaryTypographyProps={{ fontFamily: fontText, color: '#ef5350', fontWeight: 500 }}
+                    />
                 </ListItemButton>
             </Box>
         </Box>
@@ -80,12 +72,16 @@ export default function DashboardDocente() {
         <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
             <DocentNavbar handleDrawerToggle={handleDrawerToggle} drawerWidth={drawerWidth} />
             <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
-                <Drawer variant="temporary" open={mobileOpen} onClose={handleDrawerToggle}
+                <Drawer
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
                     ModalProps={{ keepMounted: true }}
                     sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth } }}>
                     {drawerContent}
                 </Drawer>
-                <Drawer variant="permanent"
+                <Drawer
+                    variant="permanent"
                     sx={{ display: { xs: 'none', sm: 'block' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: 'none' } }}
                     open>
                     {drawerContent}
@@ -94,10 +90,18 @@ export default function DashboardDocente() {
 
             <Box component="main" sx={{ flexGrow: 1, p: 4, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: { xs: 7, sm: 8 } }}>
 
-                {/* Saludo */}
-                <Typography variant="h5" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d', mb: 4 }}>
-                    Bienvenido, {user?.nombre?.split(' ')[0] || '...'}
-                </Typography>
+                {/* Saludo con Avatar — igual que estudiante */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
+                    <Avatar
+                        src={user?.fotoPerfil || undefined}
+                        sx={{ width: 56, height: 56, bgcolor: accentColor, display: { xs: 'none', sm: 'flex' } }}
+                    >
+                        {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
+                    </Avatar>
+                    <Typography variant="h5" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>
+                        Bienvenido, {user?.nombre?.split(' ')[0] || '...'}
+                    </Typography>
+                </Box>
 
                 {/* KPIs con datos del docente */}
                 <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -170,7 +174,7 @@ export default function DashboardDocente() {
                     </Box>
                 </Card>
 
-                {/* Grupos del día (estáticos por ahora) */}
+                {/* Grupos del día */}
                 <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
                     <Box sx={{ bgcolor: '#1e1e2d', p: 2.5, color: 'white' }}>
                         <Typography variant="h6" sx={{ fontFamily: fontText, fontWeight: 600, fontSize: '1.1rem' }}>
@@ -192,7 +196,9 @@ export default function DashboardDocente() {
                                             {clase.hora} | {clase.aula}
                                         </Typography>
                                     </Box>
-                                    <Button variant="outlined" startIcon={<PlayArrowIcon />}
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<PlayArrowIcon />}
                                         sx={{ fontFamily: fontText, textTransform: 'none', color: '#1e1e2d', borderColor: '#1e1e2d', borderRadius: 2 }}>
                                         Pasar Lista
                                     </Button>

@@ -46,12 +46,6 @@ export default function DocentNavbar({ handleDrawerToggle, drawerWidth = 260 }) 
                         <Avatar sx={{ bgcolor: '#1e1e2d', width: 38, height: 38, fontWeight: 'bold' }}>H</Avatar>
                     </Box>
 
-                    <Menu anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose} PaperProps={{ elevation: 0, sx: { overflow: 'visible', filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))', mt: 1.5, minWidth: 200, borderRadius: 2 } }} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-                        <MenuItem sx={{ fontFamily: fontText }}><ListItemIcon><PersonIcon fontSize="small" sx={{ color: '#1e1e2d' }} /></ListItemIcon>Mi Perfil</MenuItem>
-                        <MenuItem sx={{ fontFamily: fontText }}><ListItemIcon><SettingsIcon fontSize="small" sx={{ color: '#666' }} /></ListItemIcon>Configuración</MenuItem>
-                        <Divider />
-                        <MenuItem sx={{ fontFamily: fontText, color: '#d32f2f' }}><ListItemIcon><LogoutIcon fontSize="small" sx={{ color: '#d32f2f' }} /></ListItemIcon>Cerrar Sesión</MenuItem>
-                    </Menu>
                 </Box>
             </Toolbar>
         </AppBar>
