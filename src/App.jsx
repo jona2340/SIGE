@@ -5,26 +5,52 @@ import Login from './page/login';
 import DashboardEstudiante from './page/dashboard.student';
 import DashboardDocente from './page/dashboard.docent';
 import DashboardAdmin from './page/dashboard.admin';
+import ProtectedRoute from './components/common/ProtectedRoute';
 
 export default function App() {
   return (
     <Routes>
 
+      {/* Redirige la raíz al login */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-
+      {/* Ruta pública */}
       <Route path="/login" element={<Login />} />
 
-      <Route path="/dashboard/estudiante" element={<DashboardEstudiante />} />
-      <Route path="/dashboard/docente" element={<DashboardDocente />} />
-      <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+      {/* Rutas protegidas — solo accesibles con token + rol correcto */}
+      <Route
+        path="/dashboard/estudiante"
+        element={
+          <ProtectedRoute allowedRol="STUDENT">
+            <DashboardEstudiante />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/docente"
+        element={
+          <ProtectedRoute allowedRol="TEACHER">
+            <DashboardDocente />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/admin"
+        element={
+          <ProtectedRoute allowedRol="ADMIN">
+            <DashboardAdmin />
+          </ProtectedRoute>
+        }
+      />
 
+      {/* Ruta 404 */}
       <Route path="*" element={
         <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
           <h2>404 - Página no encontrada</h2>
           <p>La ruta que buscas no existe en el sistema SIGE.</p>
         </div>
       } />
+
     </Routes>
   );
 }

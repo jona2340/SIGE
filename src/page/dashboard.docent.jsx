@@ -1,29 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box, Drawer, Typography, List, ListItem, ListItemButton, ListItemIcon,
-    ListItemText, Divider, Grid, Card, CardContent, Button
+    ListItemText, Divider, Grid, Card, CardContent, Button, Skeleton
 } from '@mui/material';
-
-// Importamos el Navbar modular del docente
 import DocentNavbar from '../components/layout/DocentNavbar';
-
-// Íconos
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { getStoredUser, logoutUser } from '../service/authService';
 
 const drawerWidth = 260;
 const fontText = '"Montserrat", sans-serif';
 
 export default function DashboardDocente() {
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [user, setUser] = useState(null);
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+    useEffect(() => {
+        const storedUser = getStoredUser();
+        setUser(storedUser);
+    }, []);
+
+    const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
     const menuItems = [
         { text: 'Inicio', icon: <DashboardIcon />, active: true },
@@ -38,27 +39,38 @@ export default function DashboardDocente() {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', fontFamily: fontText, letterSpacing: 1 }}>
                     SIGE UTSH
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#aaa', fontFamily: fontText, mt: 0.5 }}>
-                    Panel de Docente
+                <Typography variant="body2" sx={{ color: '#42a5f5', fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>
+                    {user?.nombre || 'Cargando...'}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#aaa', fontFamily: fontText }}>
+                    {user?.departamento || ''}
                 </Typography>
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
             <List sx={{ flexGrow: 1, px: 2, mt: 2 }}>
                 {menuItems.map((item) => (
                     <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton sx={{ borderRadius: 2, bgcolor: item.active ? 'rgba(255, 255, 255, 0.1)' : 'transparent', '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' } }}>
+                        <ListItemButton sx={{
+                            borderRadius: 2,
+                            bgcolor: item.active ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' }
+                        }}>
                             <ListItemIcon sx={{ color: item.active ? 'white' : '#aaa', minWidth: 40 }}>
                                 {item.icon}
                             </ListItemIcon>
-                            <ListItemText primary={item.text} primaryTypographyProps={{ fontFamily: fontText, fontWeight: item.active ? 600 : 400, color: item.active ? 'white' : '#ccc' }} />
+                            <ListItemText primary={item.text}
+                                primaryTypographyProps={{ fontFamily: fontText, fontWeight: item.active ? 600 : 400, color: item.active ? 'white' : '#ccc' }} />
                         </ListItemButton>
                     </ListItem>
                 ))}
             </List>
             <Box sx={{ p: 2 }}>
-                <ListItemButton sx={{ borderRadius: 2, bgcolor: 'rgba(211, 47, 47, 0.1)', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.2)' } }}>
+                <ListItemButton
+                    onClick={logoutUser}
+                    sx={{ borderRadius: 2, bgcolor: 'rgba(211, 47, 47, 0.1)', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.2)' } }}>
                     <ListItemIcon sx={{ color: '#ef5350', minWidth: 40 }}><LogoutIcon /></ListItemIcon>
-                    <ListItemText primary="Cerrar Sesión" primaryTypographyProps={{ fontFamily: fontText, color: '#ef5350', fontWeight: 500 }} />
+                    <ListItemText primary="Cerrar Sesión"
+                        primaryTypographyProps={{ fontFamily: fontText, color: '#ef5350', fontWeight: 500 }} />
                 </ListItemButton>
             </Box>
         </Box>
@@ -66,49 +78,99 @@ export default function DashboardDocente() {
 
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
-
             <DocentNavbar handleDrawerToggle={handleDrawerToggle} drawerWidth={drawerWidth} />
-
             <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
-                <Drawer variant="temporary" open={mobileOpen} onClose={handleDrawerToggle} ModalProps={{ keepMounted: true }} sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth } }}>
+                <Drawer variant="temporary" open={mobileOpen} onClose={handleDrawerToggle}
+                    ModalProps={{ keepMounted: true }}
+                    sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth } }}>
                     {drawerContent}
                 </Drawer>
-                <Drawer variant="permanent" sx={{ display: { xs: 'none', sm: 'block' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: 'none' } }} open>
+                <Drawer variant="permanent"
+                    sx={{ display: { xs: 'none', sm: 'block' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: 'none' } }}
+                    open>
                     {drawerContent}
                 </Drawer>
             </Box>
 
             <Box component="main" sx={{ flexGrow: 1, p: 4, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: { xs: 7, sm: 8 } }}>
 
-                {/* Tarjetas de Resumen (Métricas de Profesor) */}
+                {/* Saludo */}
+                <Typography variant="h5" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d', mb: 4 }}>
+                    Bienvenido, {user?.nombre?.split(' ')[0] || '...'}
+                </Typography>
+
+                {/* KPIs con datos del docente */}
                 <Grid container spacing={3} sx={{ mb: 4 }}>
                     <Grid item xs={12} sm={4}>
                         <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderLeft: '4px solid #1e1e2d' }}>
                             <CardContent>
-                                <Typography color="text.secondary" sx={{ fontFamily: fontText, fontSize: 14, mb: 1 }}>Grupos Asignados</Typography>
-                                <Typography variant="h4" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>4</Typography>
+                                <Typography color="text.secondary" sx={{ fontFamily: fontText, fontSize: 14, mb: 1 }}>Departamento</Typography>
+                                {user ? (
+                                    <Typography variant="h6" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>
+                                        {user.departamento}
+                                    </Typography>
+                                ) : <Skeleton variant="text" width={120} height={40} />}
                             </CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderLeft: '4px solid #1976d2' }}>
                             <CardContent>
-                                <Typography color="text.secondary" sx={{ fontFamily: fontText, fontSize: 14, mb: 1 }}>Total de Alumnos</Typography>
-                                <Typography variant="h4" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>112</Typography>
+                                <Typography color="text.secondary" sx={{ fontFamily: fontText, fontSize: 14, mb: 1 }}>Especialidad</Typography>
+                                {user ? (
+                                    <Typography variant="h6" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>
+                                        {user.especialidad}
+                                    </Typography>
+                                ) : <Skeleton variant="text" width={120} height={40} />}
                             </CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderLeft: '4px solid #d32f2f' }}>
                             <CardContent>
-                                <Typography color="text.secondary" sx={{ fontFamily: fontText, fontSize: 14, mb: 1 }}>Evaluaciones Pendientes</Typography>
-                                <Typography variant="h4" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>28</Typography>
+                                <Typography color="text.secondary" sx={{ fontFamily: fontText, fontSize: 14, mb: 1 }}>Matrícula Docente</Typography>
+                                {user ? (
+                                    <Typography variant="h6" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>
+                                        {user.matricula}
+                                    </Typography>
+                                ) : <Skeleton variant="text" width={100} height={40} />}
                             </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
 
-                {/* Sección de Acciones Rápidas (Clases de Hoy) */}
+                {/* Perfil del docente */}
+                <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', overflow: 'hidden', mb: 3 }}>
+                    <Box sx={{ bgcolor: '#1e1e2d', p: 2.5, color: 'white' }}>
+                        <Typography variant="h6" sx={{ fontFamily: fontText, fontWeight: 600, fontSize: '1.1rem' }}>
+                            Mi Perfil Docente
+                        </Typography>
+                    </Box>
+                    <Box sx={{ p: 3 }}>
+                        {user ? (
+                            <Grid container spacing={2}>
+                                {[
+                                    { label: 'Nombre completo', value: user.nombre },
+                                    { label: 'Matrícula', value: user.matricula },
+                                    { label: 'Email institucional', value: user.email },
+                                    { label: 'Departamento', value: user.departamento },
+                                    { label: 'Especialidad', value: user.especialidad },
+                                ].map((field) => (
+                                    <Grid item xs={12} sm={6} key={field.label}>
+                                        <Typography variant="caption" sx={{ fontFamily: fontText, color: 'text.secondary', fontWeight: 600, display: 'block' }}>
+                                            {field.label.toUpperCase()}
+                                        </Typography>
+                                        <Typography sx={{ fontFamily: fontText, fontWeight: 500, color: '#1e1e2d' }}>
+                                            {field.value}
+                                        </Typography>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        ) : <Skeleton variant="rectangular" height={100} />}
+                    </Box>
+                </Card>
+
+                {/* Grupos del día (estáticos por ahora) */}
                 <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
                     <Box sx={{ bgcolor: '#1e1e2d', p: 2.5, color: 'white' }}>
                         <Typography variant="h6" sx={{ fontFamily: fontText, fontWeight: 600, fontSize: '1.1rem' }}>
@@ -130,7 +192,8 @@ export default function DashboardDocente() {
                                             {clase.hora} | {clase.aula}
                                         </Typography>
                                     </Box>
-                                    <Button variant="outlined" startIcon={<PlayArrowIcon />} sx={{ fontFamily: fontText, textTransform: 'none', color: '#1e1e2d', borderColor: '#1e1e2d', borderRadius: 2, '&:hover': { bgcolor: 'rgba(30, 30, 45, 0.05)', borderColor: '#1e1e2d' } }}>
+                                    <Button variant="outlined" startIcon={<PlayArrowIcon />}
+                                        sx={{ fontFamily: fontText, textTransform: 'none', color: '#1e1e2d', borderColor: '#1e1e2d', borderRadius: 2 }}>
                                         Pasar Lista
                                     </Button>
                                 </ListItem>
@@ -139,7 +202,6 @@ export default function DashboardDocente() {
                         ))}
                     </List>
                 </Card>
-
             </Box>
         </Box>
     );
