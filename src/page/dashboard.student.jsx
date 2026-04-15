@@ -3,6 +3,7 @@ import {
     Box, Drawer, Typography, List, ListItem, ListItemButton, ListItemIcon,
     ListItemText, Divider, Grid, Card, CardContent, Skeleton, Avatar
 } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom'; // Agregamos el enrutador
 import StudentNavbar from '../components/layout/StudentNavbar';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -18,6 +19,10 @@ export default function DashboardEstudiante() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [user, setUser] = useState(null);
 
+    // Hooks de navegación
+    const navigate = useNavigate();
+    const location = useLocation();
+
     useEffect(() => {
         const storedUser = getStoredUser();
         setUser(storedUser);
@@ -25,12 +30,7 @@ export default function DashboardEstudiante() {
 
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
-    const menuItems = [
-        { text: 'Inicio', icon: <DashboardIcon />, active: true },
-        { text: 'Mis Materias', icon: <MenuBookIcon /> },
-        { text: 'Horario', icon: <CalendarMonthIcon /> },
-        { text: 'Calificaciones', icon: <GradeIcon /> },
-    ];
+    // Actualizamos el menú para usar rutas (paths) en lugar de texto condicional
 
     const drawerContent = (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#1e1e2d', color: 'white' }}>
@@ -38,15 +38,12 @@ export default function DashboardEstudiante() {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', fontFamily: fontText, letterSpacing: 1, mb: 2 }}>
                     SIGE UTSH
                 </Typography>
-
-                {/* Foto de perfil en el menú lateral */}
                 <Avatar
                     src={user?.fotoPerfil || undefined}
                     sx={{ width: 80, height: 80, border: '3px solid #00897b', mb: 1, bgcolor: '#00897b' }}
                 >
                     {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
                 </Avatar>
-
                 <Typography variant="body2" sx={{ color: '#00897b', fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>
                     {user?.nombre || 'Cargando...'}
                 </Typography>
@@ -56,14 +53,7 @@ export default function DashboardEstudiante() {
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
             <List sx={{ flexGrow: 1, px: 2, mt: 2 }}>
-                {menuItems.map((item) => (
-                    <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton sx={{ borderRadius: 2, bgcolor: item.active ? 'rgba(0, 137, 123, 0.1)' : 'transparent', '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' } }}>
-                            <ListItemIcon sx={{ color: item.active ? '#00897b' : '#aaa', minWidth: 40 }}>{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.text} primaryTypographyProps={{ fontFamily: fontText, fontWeight: item.active ? 600 : 400, color: item.active ? 'white' : '#ccc' }} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
+
             </List>
             <Box sx={{ p: 2 }}>
                 <ListItemButton onClick={logoutUser} sx={{ borderRadius: 2, bgcolor: 'rgba(211, 47, 47, 0.1)', '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.2)' } }}>
@@ -83,7 +73,6 @@ export default function DashboardEstudiante() {
             </Box>
 
             <Box component="main" sx={{ flexGrow: 1, p: 4, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: { xs: 7, sm: 8 } }}>
-
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
                     <Avatar src={user?.fotoPerfil || undefined} sx={{ width: 56, height: 56, bgcolor: '#00897b', display: { xs: 'none', sm: 'flex' } }}>
                         {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
@@ -93,6 +82,7 @@ export default function DashboardEstudiante() {
                     </Typography>
                 </Box>
 
+                {/* --- AQUÍ SOLO QUEDA EL CONTENIDO DE "INICIO" --- */}
                 <Grid container spacing={3} sx={{ mb: 4 }}>
                     <Grid item xs={12} sm={4}>
                         <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderLeft: '4px solid #00897b' }}>
@@ -132,7 +122,7 @@ export default function DashboardEstudiante() {
                                     { label: 'Matrícula', value: user.matricula },
                                     { label: 'Email', value: user.email },
                                     { label: 'Carrera', value: user.carrera },
-                                    { label: 'Área', value: user.area || 'No especificada' }, // Se agregó Área
+                                    { label: 'Área', value: user.area || 'No especificada' },
                                     { label: 'Cuatrimestre y Grupo', value: `${user.cuatrimestre}° ${user.grupo}` },
                                 ].map((field) => (
                                     <Grid item xs={12} sm={6} key={field.label}>

@@ -12,6 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import SchoolIcon from '@mui/icons-material/School';
 import { logoutUser, getStoredUser } from '../../service/authService';
 
 const fontText = '"Montserrat", sans-serif';
@@ -77,6 +78,12 @@ export default function AdminNavbar({ handleDrawerToggle, drawerWidth = 260 }) {
                             icon={<PeopleAltIcon />}
                             active={isActive('/admin/usuarios')}
                             onClick={() => navigate('/admin/usuarios')}
+                        />
+                        <NavTab
+                            label="Materias"
+                            icon={<SchoolIcon />}
+                            active={isActive('/admin/materias')}
+                            onClick={() => navigate('/admin/materias')}
                         />
                     </Box>
                 </Box>

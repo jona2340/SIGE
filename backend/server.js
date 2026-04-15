@@ -5,6 +5,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRoutes from './routes/user.routes.js';
+import materiaRoutes from './routes/materia.routes.js';
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Montamos el router de usuarios bajo el prefijo /api/users
 app.use('/api/users', userRoutes);
+app.use('/api/materias', materiaRoutes);
+
 
 // Conexión a MongoDB y arranque del servidor
 mongoose

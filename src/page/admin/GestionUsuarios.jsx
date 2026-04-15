@@ -20,18 +20,28 @@ import AdminNavbar from '../../components/layout/AdminNavbar.jsx';
 const drawerWidth = 260;
 const fontText = '"Montserrat", sans-serif';
 
+// ── Áreas institucionales de la UTSH ──────────────────────────────────────────
+const AREAS_UTSH = [
+    'DIRECCIÓN DE CIENCIAS ECONÓMICO ADMINISTRATIVAS',
+    'DIRECCIÓN DE CIENCIAS NATURALES E INGENIERÍA',
+    'DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN',
+    'DIRECCIÓN DE CIENCIAS EXACTAS',
+    'DIRECCIÓN DE CIENCIAS DE LA SALUD',
+];
+
 const ROL_CONFIG = {
     STUDENT: { label: 'Estudiante', color: '#00897b', bg: '#e0f2f1' },
-    TEACHER: { label: 'Docente',    color: '#1565c0', bg: '#e3f2fd' },
-    ADMIN:   { label: 'Admin',      color: '#b71c1c', bg: '#ffebee' },
+    TEACHER: { label: 'Docente', color: '#1565c0', bg: '#e3f2fd' },
+    ADMIN: { label: 'Admin', color: '#b71c1c', bg: '#ffebee' },
 };
 
 function exportToCSV(rows) {
-    const headers = ['Nombre', 'Email', 'Matrícula', 'Rol', 'Detalle', 'Fecha'];
+    const headers = ['Nombre', 'Email', 'Matrícula', 'Rol', 'Área', 'Detalle', 'Fecha'];
     const lines = rows.map(r => [
         r.nombre, r.email, r.matricula, r.rol,
+        r.area || '—',
         r.rol === 'STUDENT' ? `${r.carrera} · ${r.cuatrimestre}° · Grp ${r.grupo}` :
-        r.rol === 'TEACHER' ? `${r.departamento} · ${r.especialidad}` : `Nivel ${r.nivelAcceso}`,
+            r.rol === 'TEACHER' ? `${r.departamento} · ${r.especialidad}` : `Nivel ${r.nivelAcceso}`,
         new Date(r.createdAt).toLocaleDateString('es-MX'),
     ].map(v => `"${v ?? ''}"`).join(','));
     const blob = new Blob([[headers.join(','), ...lines].join('\n')], { type: 'text/csv' });
@@ -44,16 +54,17 @@ function exportToCSV(rows) {
 export default function GestionUsuarios() {
     const adminUser = getStoredUser();
 
-    const [mobileOpen, setMobileOpen]     = useState(false);
-    const [usuarios, setUsuarios]         = useState([]);
-    const [loading, setLoading]           = useState(true);
-    const [fetchError, setFetchError]     = useState('');
-    const [search, setSearch]             = useState('');
-    const [filterRol, setFilterRol]       = useState('TODOS');
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [usuarios, setUsuarios] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState('');
+    const [search, setSearch] = useState('');
+    const [filterRol, setFilterRol] = useState('TODOS');
+    const [filterArea, setFilterArea] = useState('TODAS');   // ← nuevo filtro
     const [filterCarrera, setFilterCarrera] = useState('TODAS');
-    const [filterDept, setFilterDept]     = useState('TODOS');
+    const [filterDept, setFilterDept] = useState('TODOS');
     const [filterCuatri, setFilterCuatri] = useState('TODOS');
-    const [filterGrupo, setFilterGrupo]   = useState('TODOS');
+    const [filterGrupo, setFilterGrupo] = useState('TODOS');
 
     useEffect(() => { fetchUsers(); }, []);
 
@@ -69,24 +80,25 @@ export default function GestionUsuarios() {
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
     const carreras = useMemo(() => ['TODAS', ...new Set(usuarios.filter(u => u.carrera).map(u => u.carrera))], [usuarios]);
-    const deptos   = useMemo(() => ['TODOS', ...new Set(usuarios.filter(u => u.departamento).map(u => u.departamento))], [usuarios]);
-    const cuatris  = useMemo(() => ['TODOS', ...new Set(usuarios.filter(u => u.cuatrimestre).map(u => String(u.cuatrimestre))).values()].sort(), [usuarios]);
-    const grupos   = useMemo(() => ['TODOS', ...new Set(usuarios.filter(u => u.grupo).map(u => u.grupo)).values()].sort(), [usuarios]);
+    const deptos = useMemo(() => ['TODOS', ...new Set(usuarios.filter(u => u.departamento).map(u => u.departamento))], [usuarios]);
+    const cuatris = useMemo(() => ['TODOS', ...new Set(usuarios.filter(u => u.cuatrimestre).map(u => String(u.cuatrimestre))).values()].sort(), [usuarios]);
+    const grupos = useMemo(() => ['TODOS', ...new Set(usuarios.filter(u => u.grupo).map(u => u.grupo)).values()].sort(), [usuarios]);
 
     const rows = useMemo(() => {
         return usuarios
             .filter(u => {
                 const txt = search.toLowerCase();
-                const matchSearch  = !txt || u.nombre.toLowerCase().includes(txt) || u.email.toLowerCase().includes(txt) || u.matricula.toLowerCase().includes(txt);
-                const matchRol     = filterRol === 'TODOS'  || u.rol === filterRol;
-                const matchCarr    = filterCarrera === 'TODAS' || u.carrera === filterCarrera;
-                const matchDept    = filterDept === 'TODOS'  || u.departamento === filterDept;
-                const matchCuatri  = filterCuatri === 'TODOS' || String(u.cuatrimestre) === filterCuatri;
-                const matchGrupo   = filterGrupo === 'TODOS'  || u.grupo === filterGrupo;
-                return matchSearch && matchRol && matchCarr && matchDept && matchCuatri && matchGrupo;
+                const matchSearch = !txt || u.nombre.toLowerCase().includes(txt) || u.email.toLowerCase().includes(txt) || u.matricula.toLowerCase().includes(txt);
+                const matchRol = filterRol === 'TODOS' || u.rol === filterRol;
+                const matchArea = filterArea === 'TODAS' || u.area === filterArea;   // ← aplicar filtro área
+                const matchCarr = filterCarrera === 'TODAS' || u.carrera === filterCarrera;
+                const matchDept = filterDept === 'TODOS' || u.departamento === filterDept;
+                const matchCuatri = filterCuatri === 'TODOS' || String(u.cuatrimestre) === filterCuatri;
+                const matchGrupo = filterGrupo === 'TODOS' || u.grupo === filterGrupo;
+                return matchSearch && matchRol && matchArea && matchCarr && matchDept && matchCuatri && matchGrupo;
             })
             .map(u => ({ ...u, id: u._id }));
-    }, [usuarios, search, filterRol, filterCarrera, filterDept, filterCuatri, filterGrupo]);
+    }, [usuarios, search, filterRol, filterArea, filterCarrera, filterDept, filterCuatri, filterGrupo]);
 
     const handleDelete = async (id, nombre) => {
         if (!window.confirm(`¿Eliminar a ${nombre}? Esta acción no se puede deshacer.`)) return;
@@ -97,13 +109,15 @@ export default function GestionUsuarios() {
     };
 
     const resetFilters = () => {
-        setSearch(''); setFilterRol('TODOS'); setFilterCarrera('TODAS');
-        setFilterDept('TODOS'); setFilterCuatri('TODOS'); setFilterGrupo('TODOS');
+        setSearch(''); setFilterRol('TODOS'); setFilterArea('TODAS');
+        setFilterCarrera('TODAS'); setFilterDept('TODOS');
+        setFilterCuatri('TODOS'); setFilterGrupo('TODOS');
     };
 
     const activeFiltersCount = [
-        filterRol !== 'TODOS', filterCarrera !== 'TODAS',
-        filterDept !== 'TODOS', filterCuatri !== 'TODOS', filterGrupo !== 'TODOS',
+        filterRol !== 'TODOS', filterArea !== 'TODAS',
+        filterCarrera !== 'TODAS', filterDept !== 'TODOS',
+        filterCuatri !== 'TODOS', filterGrupo !== 'TODOS',
     ].filter(Boolean).length;
 
     const columns = [
@@ -111,8 +125,7 @@ export default function GestionUsuarios() {
             field: 'nombre', headerName: 'Nombre', flex: 1.5, minWidth: 180,
             renderCell: ({ row }) => (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, height: '100%' }}>
-                    {/* AVATAR ACTUALIZADO: Carga la imagen si existe, o la inicial del nombre */}
-                    <Avatar 
+                    <Avatar
                         src={row.fotoPerfil ? row.fotoPerfil : undefined}
                         sx={{ bgcolor: ROL_CONFIG[row.rol]?.color, width: 32, height: 32, fontSize: '0.8rem' }}
                     >
@@ -141,17 +154,35 @@ export default function GestionUsuarios() {
                 const cfg = ROL_CONFIG[value] || {};
                 return (
                     <Chip label={cfg.label || value} size="small"
-                        sx={{ fontFamily: fontText, fontWeight: 700, fontSize: '0.7rem',
-                            bgcolor: cfg.bg, color: cfg.color, border: `1px solid ${cfg.color}30` }} />
+                        sx={{
+                            fontFamily: fontText, fontWeight: 700, fontSize: '0.7rem',
+                            bgcolor: cfg.bg, color: cfg.color, border: `1px solid ${cfg.color}30`
+                        }} />
                 );
             },
+        },
+        // ── Columna Área ─────────────────────────────────────────────────────────
+        {
+            field: 'area', headerName: 'Área', flex: 1.4, minWidth: 200,
+            renderCell: ({ value }) => value ? (
+                <Tooltip title={value}>
+                    <Typography sx={{
+                        fontFamily: fontText, fontSize: '0.75rem', color: '#1565c0',
+                        fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                        {value.replace('DIRECCIÓN DE ', '')}
+                    </Typography>
+                </Tooltip>
+            ) : (
+                <Typography sx={{ fontFamily: fontText, fontSize: '0.75rem', color: '#bbb' }}>—</Typography>
+            ),
         },
         {
             field: 'detalle', headerName: 'Detalle del Rol', flex: 1.2, minWidth: 160,
             valueGetter: (_, row) => {
                 if (row.rol === 'STUDENT') return `${row.carrera || '—'} · ${row.cuatrimestre || '—'}° · Grp ${row.grupo || '—'}`;
                 if (row.rol === 'TEACHER') return `${row.departamento || '—'} · ${row.especialidad || '—'}`;
-                if (row.rol === 'ADMIN')   return `Nivel de acceso ${row.nivelAcceso}`;
+                if (row.rol === 'ADMIN') return `Nivel de acceso ${row.nivelAcceso}`;
                 return '—';
             },
             renderCell: ({ value }) => (
@@ -225,7 +256,7 @@ export default function GestionUsuarios() {
             </Box>
 
             <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, sm: 4 }, mt: { xs: 7, sm: 8 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
-                
+
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, flexWrap: 'wrap', gap: 2 }}>
                     <Box>
                         <Typography variant="h5" sx={{ fontFamily: fontText, fontWeight: 700, color: '#1e1e2d' }}>
@@ -287,6 +318,24 @@ export default function GestionUsuarios() {
                             </FormControl>
                         </Grid>
 
+                        {/* ── Filtro Área (visible para TODOS, STUDENT y TEACHER) ── */}
+                        {(filterRol === 'TODOS' || filterRol === 'STUDENT' || filterRol === 'TEACHER') && (
+                            <Grid item xs={6} sm={3} md={2}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel sx={{ fontFamily: fontText, fontSize: '0.85rem' }}>Área</InputLabel>
+                                    <Select value={filterArea} onChange={e => setFilterArea(e.target.value)} label="Área"
+                                        sx={{ fontFamily: fontText, fontSize: '0.85rem', borderRadius: 2 }}>
+                                        <MenuItem value="TODAS" sx={{ fontFamily: fontText }}>Todas</MenuItem>
+                                        {AREAS_UTSH.map(a => (
+                                            <MenuItem key={a} value={a} sx={{ fontFamily: fontText, fontSize: '0.8rem', whiteSpace: 'normal' }}>
+                                                {a.replace('DIRECCIÓN DE ', '')}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        )}
+
                         {(filterRol === 'TODOS' || filterRol === 'STUDENT') && (
                             <Grid item xs={6} sm={3} md={2}>
                                 <FormControl fullWidth size="small">
@@ -338,11 +387,12 @@ export default function GestionUsuarios() {
 
                     {activeFiltersCount > 0 && (
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
-                            {filterRol !== 'TODOS'      && <Chip size="small" label={`Rol: ${ROL_CONFIG[filterRol]?.label}`} onDelete={() => setFilterRol('TODOS')}         sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
-                            {filterCarrera !== 'TODAS'  && <Chip size="small" label={`Carrera: ${filterCarrera}`}             onDelete={() => setFilterCarrera('TODAS')}      sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
-                            {filterDept !== 'TODOS'     && <Chip size="small" label={`Depto: ${filterDept}`}                  onDelete={() => setFilterDept('TODOS')}         sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
-                            {filterCuatri !== 'TODOS'   && <Chip size="small" label={`Cuatrimestre: ${filterCuatri}°`}        onDelete={() => setFilterCuatri('TODOS')}       sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
-                            {filterGrupo !== 'TODOS'    && <Chip size="small" label={`Grupo: ${filterGrupo}`}                 onDelete={() => setFilterGrupo('TODOS')}        sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
+                            {filterRol !== 'TODOS' && <Chip size="small" label={`Rol: ${ROL_CONFIG[filterRol]?.label}`} onDelete={() => setFilterRol('TODOS')} sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
+                            {filterArea !== 'TODAS' && <Chip size="small" label={`Área: ${filterArea.replace('DIRECCIÓN DE ', '')}`} onDelete={() => setFilterArea('TODAS')} sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
+                            {filterCarrera !== 'TODAS' && <Chip size="small" label={`Carrera: ${filterCarrera}`} onDelete={() => setFilterCarrera('TODAS')} sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
+                            {filterDept !== 'TODOS' && <Chip size="small" label={`Depto: ${filterDept}`} onDelete={() => setFilterDept('TODOS')} sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
+                            {filterCuatri !== 'TODOS' && <Chip size="small" label={`Cuatrimestre: ${filterCuatri}°`} onDelete={() => setFilterCuatri('TODOS')} sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
+                            {filterGrupo !== 'TODOS' && <Chip size="small" label={`Grupo: ${filterGrupo}`} onDelete={() => setFilterGrupo('TODOS')} sx={{ fontFamily: fontText, fontSize: '0.75rem' }} />}
                         </Box>
                     )}
                 </Card>
@@ -386,10 +436,10 @@ export default function GestionUsuarios() {
                                 bgcolor: '#f8f9fa', fontFamily: fontText, fontWeight: 700,
                                 fontSize: '0.78rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.05em',
                             },
-                            '& .MuiDataGrid-row':           { '&:hover': { bgcolor: '#f0f7ff' } },
-                            '& .MuiDataGrid-cell':          { borderBottom: '1px solid #f0f0f0', alignItems: 'center' },
+                            '& .MuiDataGrid-row': { '&:hover': { bgcolor: '#f0f7ff' } },
+                            '& .MuiDataGrid-cell': { borderBottom: '1px solid #f0f0f0', alignItems: 'center' },
                             '& .MuiDataGrid-footerContainer': { borderTop: '1px solid #f0f0f0', fontFamily: fontText },
-                            '& .MuiTablePagination-root':   { fontFamily: fontText },
+                            '& .MuiTablePagination-root': { fontFamily: fontText },
                         }}
                     />
                 </Card>

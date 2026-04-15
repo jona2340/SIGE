@@ -1,6 +1,5 @@
 // Script para poblar la base de datos con usuarios de prueba.
 // Ejecutar UNA sola vez con: node seed.js
-// Después puedes borrarlo o guardarlo para resets futuros.
 
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
@@ -26,7 +25,7 @@ const usuarios = [
             matricula: '2024-001',
             rol: 'STUDENT',
             carrera: 'Tecnologías de la Información',
-            area: 'Desarrollo de Software',
+            area: 'DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN',
             cuatrimestre: 5,
             grupo: 'A',
             fotoPerfil: 'https://ui-avatars.com/api/?name=Ricardo+Ruiz&background=0D8ABC&color=fff',
@@ -41,7 +40,7 @@ const usuarios = [
             matricula: '2024-002',
             rol: 'STUDENT',
             carrera: 'Mecatrónica',
-            area: 'Automatización',
+            area: 'DIRECCIÓN DE CIENCIAS NATURALES E INGENIERÍA',
             cuatrimestre: 3,
             grupo: 'B',
             fotoPerfil: 'https://randomuser.me/api/portraits/women/44.jpg',
@@ -56,7 +55,7 @@ const usuarios = [
             matricula: '2024-003',
             rol: 'STUDENT',
             carrera: 'Tecnologías de la Información',
-            area: 'Infraestructura de Redes',
+            area: 'DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN',
             cuatrimestre: 8,
             grupo: 'A',
             fotoPerfil: 'https://randomuser.me/api/portraits/men/32.jpg',
@@ -71,7 +70,7 @@ const usuarios = [
             matricula: '2024-004',
             rol: 'STUDENT',
             carrera: 'Desarrollo de Negocios',
-            area: 'Mercadotecnia',
+            area: 'DIRECCIÓN DE CIENCIAS ECONÓMICO ADMINISTRATIVAS',
             cuatrimestre: 2,
             grupo: 'C',
             fotoPerfil: 'https://ui-avatars.com/api/?name=Sofia+Castro&background=F59E0B&color=fff',
@@ -86,25 +85,10 @@ const usuarios = [
             matricula: '2024-005',
             rol: 'STUDENT',
             carrera: 'Mantenimiento Industrial',
-            area: 'Instalaciones',
+            area: 'DIRECCIÓN DE CIENCIAS NATURALES E INGENIERÍA',
             cuatrimestre: 5,
             grupo: 'B',
             fotoPerfil: 'https://randomuser.me/api/portraits/men/65.jpg',
-        },
-        password: 'alumno123',
-    },
-    {
-        Model: Student,
-        data: {
-            nombre: 'Valeria Rojas',
-            email: 'valeria.rojas@utsh.edu.mx',
-            matricula: '2024-006',
-            rol: 'STUDENT',
-            carrera: 'Tecnologías de la Información',
-            area: 'Desarrollo de Software',
-            cuatrimestre: 5,
-            grupo: 'A',
-            fotoPerfil: 'https://randomuser.me/api/portraits/women/68.jpg',
         },
         password: 'alumno123',
     },
@@ -116,7 +100,7 @@ const usuarios = [
             matricula: '2024-007',
             rol: 'STUDENT',
             carrera: 'Contaduría',
-            area: 'Finanzas',
+            area: 'DIRECCIÓN DE CIENCIAS ECONÓMICO ADMINISTRATIVAS',
             cuatrimestre: 7,
             grupo: 'A',
             fotoPerfil: 'https://ui-avatars.com/api/?name=Javier+Dominguez&background=10B981&color=fff',
@@ -136,6 +120,7 @@ const usuarios = [
             rol: 'TEACHER',
             departamento: 'Ciencias Exactas y Básicas',
             especialidad: 'Desarrollo de Software Multiplataforma',
+            area: 'DIRECCIÓN DE CIENCIAS EXACTAS',
             fotoPerfil: 'https://randomuser.me/api/portraits/women/22.jpg',
         },
         password: 'docente123',
@@ -149,6 +134,7 @@ const usuarios = [
             rol: 'TEACHER',
             departamento: 'Tecnologías de la Información',
             especialidad: 'Infraestructura de Redes Digitales',
+            area: 'DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN',
             fotoPerfil: 'https://randomuser.me/api/portraits/men/46.jpg',
         },
         password: 'docente123',
@@ -162,6 +148,7 @@ const usuarios = [
             rol: 'TEACHER',
             departamento: 'Desarrollo de Negocios',
             especialidad: 'Estrategias de Marketing',
+            area: 'DIRECCIÓN DE CIENCIAS ECONÓMICO ADMINISTRATIVAS',
             fotoPerfil: 'https://ui-avatars.com/api/?name=Patricia+Mendoza&background=8B5CF6&color=fff',
         },
         password: 'docente123',
@@ -175,6 +162,7 @@ const usuarios = [
             rol: 'TEACHER',
             departamento: 'Mecatrónica',
             especialidad: 'Sistemas Embebidos',
+            area: 'DIRECCIÓN DE CIENCIAS NATURALES E INGENIERÍA',
             fotoPerfil: 'https://randomuser.me/api/portraits/men/29.jpg',
         },
         password: 'docente123',
@@ -188,6 +176,7 @@ const usuarios = [
             rol: 'TEACHER',
             departamento: 'Idiomas',
             especialidad: 'Inglés Técnico',
+            area: 'DIRECCIÓN DE CIENCIAS ECONÓMICO ADMINISTRATIVAS',
             fotoPerfil: 'https://randomuser.me/api/portraits/women/12.jpg',
         },
         password: 'docente123',
@@ -207,42 +196,6 @@ const usuarios = [
             fotoPerfil: 'https://ui-avatars.com/api/?name=Admin+Martinez&background=EF4444&color=fff',
         },
         password: 'admin123',
-    },
-    {
-        Model: Admin,
-        data: {
-            nombre: 'Soporte Técnico',
-            email: 'soporte@utsh.edu.mx',
-            matricula: 'ADM-002',
-            rol: 'ADMIN',
-            nivelAcceso: 2,
-            fotoPerfil: 'https://ui-avatars.com/api/?name=Soporte+Tecnico&background=3B82F6&color=fff',
-        },
-        password: 'admin123',
-    },
-    {
-        Model: Admin,
-        data: {
-            nombre: 'Dirección Académica',
-            email: 'direccion@utsh.edu.mx',
-            matricula: 'ADM-003',
-            rol: 'ADMIN',
-            nivelAcceso: 3,
-            fotoPerfil: 'https://ui-avatars.com/api/?name=Direccion+Academica&background=111827&color=fff',
-        },
-        password: 'admin123',
-    },
-    {
-        Model: Admin,
-        data: {
-            nombre: 'Control Escolar',
-            email: 'controlescolar@utsh.edu.mx',
-            matricula: 'ADM-004',
-            rol: 'ADMIN',
-            nivelAcceso: 1,
-            fotoPerfil: 'https://randomuser.me/api/portraits/women/50.jpg',
-        },
-        password: 'admin123',
     }
 ];
 
@@ -251,7 +204,6 @@ async function seed() {
         await mongoose.connect(process.env.MONGO_URI);
         console.log('✅ Conectado a MongoDB');
 
-        // Limpiamos usuarios existentes para evitar duplicados
         await User.deleteMany({});
         console.log('🗑  Colección users limpiada');
 
@@ -261,15 +213,10 @@ async function seed() {
                 ...usuario.data,
                 password: hashedPassword,
             });
-            console.log(`✔  ${usuario.data.rol} creado → matrícula: ${usuario.data.matricula} | password: ${usuario.password}`);
+            console.log(`✔  ${usuario.data.rol} creado → área: ${usuario.data.area || 'N/A'}`);
         }
 
-        console.log('\n🎉 Seed completado. Credenciales de prueba:\n');
-        console.log('  ROL        | MATRÍCULA  | CONTRASEÑA');
-        console.log('  -----------|------------|------------');
-        console.log('  STUDENT    | 2024-001   | alumno123');
-        console.log('  TEACHER    | D-045      | docente123');
-        console.log('  ADMIN      | ADM-001    | admin123');
+        console.log('\n🎉 Seed completado con éxito.');
 
     } catch (error) {
         console.error('❌ Error en el seed:', error);

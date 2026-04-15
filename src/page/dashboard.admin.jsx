@@ -31,6 +31,15 @@ import { getAllUsers, registerUser, deleteUser } from '../service/adminService';
 const drawerWidth = 260;
 const fontText = '"Montserrat", sans-serif';
 
+// ── Áreas institucionales de la UTSH ──────────────────────────────────────────
+const AREAS_UTSH = [
+    'DIRECCIÓN DE CIENCIAS ECONÓMICO ADMINISTRATIVAS',
+    'DIRECCIÓN DE CIENCIAS NATURALES E INGENIERÍA',
+    'DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN',
+    'DIRECCIÓN DE CIENCIAS EXACTAS',
+    'DIRECCIÓN DE CIENCIAS DE LA SALUD',
+];
+
 const emptyForm = {
     nombre: '', email: '', matricula: '', password: '',
     rol: 'STUDENT',
@@ -121,7 +130,6 @@ export default function DashboardAdmin() {
         if (formError) setFormError('');
     };
 
-    // CORRECCIÓN APLICADA AQUÍ ABAJO 👇
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -133,10 +141,8 @@ export default function DashboardAdmin() {
                 setFormError('La imagen debe pesar menos de 2MB.');
                 return;
             }
-
             const reader = new FileReader();
             reader.onloadend = () => {
-                // Usamos una función de callback para asegurar que no se sobreescriban otros campos
                 setFormData((prev) => ({ ...prev, fotoPerfil: reader.result }));
                 setFormError('');
             };
@@ -166,6 +172,7 @@ export default function DashboardAdmin() {
         } else if (formData.rol === 'TEACHER') {
             payload.departamento = formData.departamento;
             payload.especialidad = formData.especialidad;
+            payload.area = formData.area;
         } else if (formData.rol === 'ADMIN') {
             payload.nivelAcceso = Number(formData.nivelAcceso);
         }
@@ -195,7 +202,6 @@ export default function DashboardAdmin() {
     const totalEstudiantes = usuarios.filter(u => u.rol === 'STUDENT').length;
     const totalDocentes = usuarios.filter(u => u.rol === 'TEACHER').length;
     const totalAdmins = usuarios.filter(u => u.rol === 'ADMIN').length;
-
 
     const drawerContent = (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#111827', color: 'white' }}>
@@ -288,24 +294,21 @@ export default function DashboardAdmin() {
                                 <React.Fragment key={item._id}>
                                     <ListItem sx={{ py: 2, px: 3 }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-
-                                            {/* Avatar rediseñado para mostrar fotoPerfil de forma prominente */}
                                             <Avatar
                                                 src={item.fotoPerfil ? item.fotoPerfil : undefined}
-                                                sx={{
-                                                    bgcolor: ROL_COLORS[item.rol] || '#999',
-                                                    width: 48,
-                                                    height: 48,
-                                                    border: '2px solid white',
-                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-                                                }}
+                                                sx={{ bgcolor: ROL_COLORS[item.rol] || '#999', width: 48, height: 48, border: '2px solid white', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
                                             >
                                                 {!item.fotoPerfil && item.nombre ? item.nombre.charAt(0).toUpperCase() : ''}
                                             </Avatar>
-
                                             <Box sx={{ flexGrow: 1 }}>
                                                 <Typography sx={{ fontFamily: fontText, fontWeight: 600, fontSize: '0.95rem' }}>{item.nombre}</Typography>
                                                 <Typography sx={{ fontFamily: fontText, color: 'text.secondary', fontSize: '0.8rem' }}>{item.email} · {item.matricula}</Typography>
+                                                {/* Área visible en la lista */}
+                                                {item.area && (
+                                                    <Typography sx={{ fontFamily: fontText, color: '#1976d2', fontSize: '0.72rem', fontWeight: 600, mt: 0.2 }}>
+                                                        {item.area}
+                                                    </Typography>
+                                                )}
                                             </Box>
                                             <Box sx={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: 1 }}>
                                                 <Chip label={ROL_LABELS[item.rol] || item.rol} size="small" sx={{ fontFamily: fontText, fontWeight: 600, fontSize: '0.7rem', bgcolor: ROL_COLORS[item.rol] + '20', color: ROL_COLORS[item.rol] }} />
@@ -384,7 +387,7 @@ export default function DashboardAdmin() {
                             }}
                         />
 
-                        {/* Campos de ESTUDIANTE */}
+                        {/* ── Campos de ESTUDIANTE ────────────────────────────── */}
                         {formData.rol === 'STUDENT' && (
                             <Grid container spacing={1}>
                                 <Grid item xs={12} sm={6}>
@@ -397,10 +400,19 @@ export default function DashboardAdmin() {
                                         <MenuItem value="Terapia Física">Terapia Física</MenuItem>
                                         <MenuItem value="Diseño Textil">Diseño Textil</MenuItem>
                                         <MenuItem value="Recursos Naturales">Recursos Naturales</MenuItem>
+                                        <MenuItem value="Mantenimiento Industrial">Mantenimiento Industrial</MenuItem>
                                     </StyledInput>
                                 </Grid>
+                                {/* ── Select de Área (Estudiante) ── */}
                                 <Grid item xs={12} sm={6}>
-                                    <StyledInput placeholder="Área" name="area" value={formData.area} onChange={handleFormChange} />
+                                    <FormControl fullWidth size="small" sx={{ bgcolor: '#f7f7f7', borderRadius: '12px', '& .MuiOutlinedInput-root': { borderRadius: '12px', '& fieldset': { borderColor: 'transparent' }, '&:hover fieldset': { borderColor: 'transparent' }, '&.Mui-focused fieldset': { borderColor: '#1976d2' } } }}>
+                                        <InputLabel sx={{ fontFamily: fontText, fontSize: '0.9rem' }}>Área</InputLabel>
+                                        <Select name="area" value={formData.area} onChange={handleFormChange} label="Área" sx={{ fontFamily: fontText }}>
+                                            {AREAS_UTSH.map(a => (
+                                                <MenuItem key={a} value={a} sx={{ fontFamily: fontText, fontSize: '0.82rem', whiteSpace: 'normal' }}>{a}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <StyledInput select placeholder="Cuatrimestre" name="cuatrimestre" value={formData.cuatrimestre} onChange={handleFormChange}>
@@ -415,7 +427,7 @@ export default function DashboardAdmin() {
                             </Grid>
                         )}
 
-                        {/* Campos de DOCENTE */}
+                        {/* ── Campos de DOCENTE ────────────────────────────────── */}
                         {formData.rol === 'TEACHER' && (
                             <Grid container spacing={1}>
                                 <Grid item xs={12} sm={6}>
@@ -426,6 +438,9 @@ export default function DashboardAdmin() {
                                         <MenuItem value="Mecánica y Manufactura">Mecánica y Manufactura</MenuItem>
                                         <MenuItem value="Ciencias de la Salud">Ciencias de la Salud</MenuItem>
                                         <MenuItem value="Diseño y Arte">Diseño y Arte</MenuItem>
+                                        <MenuItem value="Desarrollo de Negocios">Desarrollo de Negocios</MenuItem>
+                                        <MenuItem value="Mecatrónica">Mecatrónica</MenuItem>
+                                        <MenuItem value="Idiomas">Idiomas</MenuItem>
                                     </StyledInput>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -438,12 +453,26 @@ export default function DashboardAdmin() {
                                         <MenuItem value="Salud Pública">Salud Pública</MenuItem>
                                         <MenuItem value="Rehabilitación">Rehabilitación</MenuItem>
                                         <MenuItem value="Confección Textil">Confección Textil</MenuItem>
+                                        <MenuItem value="Estrategias de Marketing">Estrategias de Marketing</MenuItem>
+                                        <MenuItem value="Sistemas Embebidos">Sistemas Embebidos</MenuItem>
+                                        <MenuItem value="Inglés Técnico">Inglés Técnico</MenuItem>
                                     </StyledInput>
+                                </Grid>
+                                {/* ── Select de Área (Docente) — ocupa ancho completo ── */}
+                                <Grid item xs={12}>
+                                    <FormControl fullWidth size="small" sx={{ bgcolor: '#f7f7f7', borderRadius: '12px', '& .MuiOutlinedInput-root': { borderRadius: '12px', '& fieldset': { borderColor: 'transparent' }, '&:hover fieldset': { borderColor: 'transparent' }, '&.Mui-focused fieldset': { borderColor: '#1976d2' } } }}>
+                                        <InputLabel sx={{ fontFamily: fontText, fontSize: '0.9rem' }}>Área</InputLabel>
+                                        <Select name="area" value={formData.area} onChange={handleFormChange} label="Área" sx={{ fontFamily: fontText }}>
+                                            {AREAS_UTSH.map(a => (
+                                                <MenuItem key={a} value={a} sx={{ fontFamily: fontText, fontSize: '0.82rem', whiteSpace: 'normal' }}>{a}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                             </Grid>
                         )}
 
-                        {/* Campos de ADMIN */}
+                        {/* ── Campos de ADMIN ──────────────────────────────────── */}
                         {formData.rol === 'ADMIN' && (
                             <FormControl fullWidth size="small">
                                 <InputLabel sx={{ fontFamily: fontText }}>Nivel de Acceso</InputLabel>

@@ -3,8 +3,11 @@ import {
     Box, Drawer, Typography, List, ListItem, ListItemButton, ListItemIcon,
     ListItemText, Divider, Grid, Card, CardContent, Button, Skeleton, Avatar
 } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom'; 
 import DocentNavbar from '../components/layout/DocentNavbar';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import ClassIcon from '@mui/icons-material/Class';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt'; 
 import GroupsIcon from '@mui/icons-material/Groups';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
@@ -19,6 +22,10 @@ const accentColor = '#42a5f5'; // color acento del docente
 export default function DashboardDocente() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [user, setUser] = useState(null);
+    
+    // 🚀 Hooks para navegación
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const storedUser = getStoredUser();
@@ -26,7 +33,6 @@ export default function DashboardDocente() {
     }, []);
 
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-
 
 
     const drawerContent = (
@@ -52,8 +58,11 @@ export default function DashboardDocente() {
                 </Typography>
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
+            
+            {/* 🚀 Renderizado del menú lateral */}
             <List sx={{ flexGrow: 1, px: 2, mt: 2 }}>
             </List>
+
             <Box sx={{ p: 2 }}>
                 <ListItemButton
                     onClick={logoutUser}
@@ -70,7 +79,9 @@ export default function DashboardDocente() {
 
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
-            <DocentNavbar handleDrawerToggle={handleDrawerToggle} drawerWidth={drawerWidth} />
+            {/* 🚀 AQUÍ ESTÁ EL CAMBIO PRINCIPAL: user={user} */}
+            <DocentNavbar handleDrawerToggle={handleDrawerToggle} user={user} drawerWidth={drawerWidth} />
+            
             <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
                 <Drawer
                     variant="temporary"
@@ -90,7 +101,7 @@ export default function DashboardDocente() {
 
             <Box component="main" sx={{ flexGrow: 1, p: 4, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: { xs: 7, sm: 8 } }}>
 
-                {/* Saludo con Avatar — igual que estudiante */}
+                {/* Saludo con Avatar */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
                     <Avatar
                         src={user?.fotoPerfil || undefined}
