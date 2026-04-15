@@ -10,7 +10,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import AssessmentIcon from '@mui/icons-material/Assessment'; // 🚀 Nuevo ícono importado
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'; 
 import { logoutUser } from '../../service/authService';
 
 const fontText = '"Montserrat", sans-serif';
@@ -51,7 +52,7 @@ export default function StudentNavbar({ handleDrawerToggle, user, drawerWidth = 
     return (
         <AppBar position="fixed" sx={{ width: { sm: `calc(100% - ${drawerWidth}px)` }, ml: { sm: `${drawerWidth}px` }, bgcolor: 'white', color: '#333', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
             <Toolbar sx={{ justifyContent: 'space-between', minHeight: { sm: '64px' } }}>
-                
+
                 {/* Izquierda: menú hamburguesa + tabs de navegación */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 1, display: { sm: 'none' }, color: '#00897b' }}>
@@ -63,21 +64,27 @@ export default function StudentNavbar({ handleDrawerToggle, user, drawerWidth = 
                         <NavTab
                             label="Inicio"
                             icon={<DashboardIcon />}
-                            active={isActive('/dashboard/estudiante')} 
-                            onClick={() => navigate('/dashboard/estudiante')} 
+                            active={isActive('/dashboard/estudiante')}
+                            onClick={() => navigate('/dashboard/estudiante')}
                         />
                         <NavTab
                             label="Mis Materias"
                             icon={<MenuBookIcon />}
-                            active={isActive('/estudiante/materias')} 
-                            onClick={() => navigate('/estudiante/materias')} 
+                            active={isActive('/estudiante/materias')}
+                            onClick={() => navigate('/estudiante/materias')}
                         />
                         {/* 🚀 NUEVA PESTAÑA: Mi Promedio */}
                         <NavTab
                             label="Mi Promedio"
                             icon={<AssessmentIcon />}
-                            active={isActive('/estudiante/reporte')} 
-                            onClick={() => navigate('/estudiante/reporte')} 
+                            active={isActive('/estudiante/reporte')}
+                            onClick={() => navigate('/estudiante/reporte')}
+                        />
+                        <NavTab
+                            label="Mi Horario"
+                            icon={<CalendarMonthIcon />}
+                            active={isActive('/estudiante/horario')}
+                            onClick={() => navigate('/estudiante/horario')}
                         />
                     </Box>
                 </Box>

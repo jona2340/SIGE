@@ -14,6 +14,7 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SchoolIcon from '@mui/icons-material/School';
 import { logoutUser, getStoredUser } from '../../service/authService';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const fontText = '"Montserrat", sans-serif';
 
@@ -84,6 +85,13 @@ export default function AdminNavbar({ handleDrawerToggle, drawerWidth = 260 }) {
                             icon={<SchoolIcon />}
                             active={isActive('/admin/materias')}
                             onClick={() => navigate('/admin/materias')}
+                        />
+
+                        <NavTab
+                            label="Horarios"
+                            icon={<AccessTimeIcon />}
+                            active={isActive('/admin/horarios')}
+                            onClick={() => navigate('/admin/horarios')}
                         />
                     </Box>
                 </Box>

@@ -3,6 +3,7 @@ import { AppBar, Toolbar, IconButton, Typography, Avatar, Box, Badge, Tooltip } 
 import { useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ClassIcon from '@mui/icons-material/Class';
 
@@ -43,14 +44,14 @@ export default function DocentNavbar({ handleDrawerToggle, user, drawerWidth = 2
     const isActive = (path) => location.pathname === path;
 
     return (
-        <AppBar position="fixed" sx={{ 
-            width: { sm: `calc(100% - ${drawerWidth}px)` }, 
-            ml: { sm: `${drawerWidth}px` }, 
-            bgcolor: 'white', color: '#333', 
-            boxShadow: '0 2px 10px rgba(0,0,0,0.05)' 
+        <AppBar position="fixed" sx={{
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
+            bgcolor: 'white', color: '#333',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
         }}>
             <Toolbar sx={{ justifyContent: 'space-between', minHeight: { sm: '64px' } }}>
-                
+
                 {/* Izquierda: menú + tabs de navegación */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 1, display: { sm: 'none' }, color: accentColor }}>
@@ -69,6 +70,12 @@ export default function DocentNavbar({ handleDrawerToggle, user, drawerWidth = 2
                             icon={<ClassIcon />}
                             active={isActive('/docente/clases')}
                             onClick={() => navigate('/docente/clases')}
+                        />
+                        <NavTab
+                            label="Mi Horario"
+                            icon={<CalendarMonthIcon />}
+                            active={isActive('/docente/horario')}
+                            onClick={() => navigate('/docente/horario')}
                         />
                     </Box>
                 </Box>
