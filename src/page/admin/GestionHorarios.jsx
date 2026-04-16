@@ -288,27 +288,33 @@ export default function GestionHorarios() {
                     <Grid container spacing={2} alignItems="flex-end">
                         <Grid item xs={12} sm={4}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Carrera</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Carrera</InputLabel>
                                 <Select value={selCarrera} onChange={e => { setSelCarrera(e.target.value); setCargado(false); }} label="Carrera"
+                                    notched displayEmpty
                                     sx={{ fontFamily: fontText, borderRadius: 2 }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona carrera</MenuItem>
                                     {CARRERAS.map(c => <MenuItem key={c} value={c} sx={{ fontFamily: fontText }}>{c}</MenuItem>)}
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={6} sm={2}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Cuatrimestre</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Cuatrimestre</InputLabel>
                                 <Select value={selCuatri} onChange={e => { setSelCuatri(e.target.value); setCargado(false); }} label="Cuatrimestre"
+                                    notched displayEmpty
                                     sx={{ fontFamily: fontText, borderRadius: 2 }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Todos</MenuItem>
                                     {CUATRIS.map(n => <MenuItem key={n} value={String(n)} sx={{ fontFamily: fontText }}>{n}°</MenuItem>)}
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={6} sm={2}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Grupo</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Grupo</InputLabel>
                                 <Select value={selGrupo} onChange={e => { setSelGrupo(e.target.value); setCargado(false); }} label="Grupo"
+                                    notched displayEmpty
                                     sx={{ fontFamily: fontText, borderRadius: 2 }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona</MenuItem>
                                     {GRUPOS.map(g => <MenuItem key={g} value={g} sx={{ fontFamily: fontText }}>Grupo {g}</MenuItem>)}
                                 </Select>
                             </FormControl>
@@ -521,15 +527,17 @@ export default function GestionHorarios() {
                     </Typography>
                 </Box>
                 <DialogContent sx={{ px: 3, py: 3, bgcolor: '#fafafa' }}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2.5}>
 
                         {/* Materia */}
                         <Grid item xs={12}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Materia</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Materia</InputLabel>
                                 <Select value={formBloque.materiaId} label="Materia"
+                                    notched displayEmpty
                                     onChange={e => setFormBloque({ ...formBloque, materiaId: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona una materia</MenuItem>
                                     {materias.map(m => (
                                         <MenuItem key={m._id} value={String(m._id)}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -548,10 +556,12 @@ export default function GestionHorarios() {
                         {/* Día */}
                         <Grid item xs={12}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Día</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Día</InputLabel>
                                 <Select value={formBloque.dia} label="Día"
+                                    notched displayEmpty
                                     onChange={e => setFormBloque({ ...formBloque, dia: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona un día</MenuItem>
                                     {DIAS.map(d => <MenuItem key={d} value={d} sx={{ fontFamily: fontText }}>{d}</MenuItem>)}
                                 </Select>
                             </FormControl>
@@ -560,10 +570,12 @@ export default function GestionHorarios() {
                         {/* Hora inicio */}
                         <Grid item xs={6}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Hora inicio</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Hora inicio</InputLabel>
                                 <Select value={formBloque.horaInicio} label="Hora inicio"
+                                    notched displayEmpty
                                     onChange={e => setFormBloque({ ...formBloque, horaInicio: e.target.value, horaFin: '' })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>--:--</MenuItem>
                                     {slots.slice(0, -1).map(s => <MenuItem key={s} value={s} sx={{ fontFamily: fontText }}>{s}</MenuItem>)}
                                 </Select>
                             </FormControl>
@@ -572,11 +584,13 @@ export default function GestionHorarios() {
                         {/* Hora fin — solo slots posteriores a inicio */}
                         <Grid item xs={6}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Hora fin</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Hora fin</InputLabel>
                                 <Select value={formBloque.horaFin} label="Hora fin"
+                                    notched displayEmpty
                                     disabled={!formBloque.horaInicio}
                                     onChange={e => setFormBloque({ ...formBloque, horaFin: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>--:--</MenuItem>
                                     {slots.filter(s => toMin(s) > toMin(formBloque.horaInicio || rango.min))
                                         .map(s => <MenuItem key={s} value={s} sx={{ fontFamily: fontText }}>{s}</MenuItem>)}
                                 </Select>
@@ -603,7 +617,7 @@ export default function GestionHorarios() {
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3, pt: 1, bgcolor: '#fafafa', gap: 1 }}>
                     <Button onClick={() => setOpenBloque(false)}
-                        sx={{ fontFamily: fontText, textTransform: 'none', color: '#888', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                        sx={{ fontFamily: fontText, textTransform: 'none', color: '#888', borderRadius: 2, border: '1px solid #e0e0e0', px: 3 }}>
                         Cancelar
                     </Button>
                     <Button onClick={handleAgregarBloque} variant="contained" fullWidth
