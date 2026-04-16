@@ -25,6 +25,17 @@ export async function registerUser(userData) {
     return data;
 }
 
+export async function updateUser(userId, userData) {
+    const response = await fetch(`${BASE_URL}/${userId}`, {
+        method: 'PUT',
+        headers: authHeaders(),
+        body: JSON.stringify(userData),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Error al actualizar usuario');
+    return data;
+}
+
 export async function deleteUser(userId) {
     const response = await fetch(`${BASE_URL}/${userId}`, {
         method: 'DELETE',

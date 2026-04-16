@@ -19,7 +19,6 @@ export const createUser = async (req, res) => {
     try {
         const { password, rol, ...rest } = req.body;
 
-        // 1. Validar rol
         const UserModel = MODEL_MAP[rol?.toUpperCase()];
         if (!UserModel) {
             return res.status(400).json({
@@ -28,7 +27,6 @@ export const createUser = async (req, res) => {
             });
         }
 
-        // 2. Verificar duplicados (email o matrícula)
         const existingUser = await User.findOne({
             $or: [{ email: rest.email }, { matricula: rest.matricula }],
         });
@@ -39,17 +37,14 @@ export const createUser = async (req, res) => {
             });
         }
 
-        // 3. Hashear contraseña
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        // 4. Crear usuario con el discriminator correcto
         const newUser = await UserModel.create({
             ...rest,
             password: hashedPassword,
             rol: rol.toUpperCase(),
         });
 
-        // 5. Responder sin exponer la contraseña
         const { password: _, ...userResponse } = newUser.toObject();
 
         return res.status(201).json({
@@ -64,6 +59,64 @@ export const createUser = async (req, res) => {
             return res.status(422).json({ success: false, message: messages.join(' | ') });
         }
         console.error('Error en createUser:', error);
+        return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+    }
+};
+
+// ─────────────────────────────────────────
+// PUT /api/users/:id — editar usuario (solo admin)
+// ─────────────────────────────────────────
+export const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Campos que NO se pueden modificar desde este endpoint
+        const { password, rol, _id, __v, createdAt, updatedAt, ...updateFields } = req.body;
+
+        // Si se envía una nueva contraseña, hashearla
+        if (password && password.trim().length >= 8) {
+            updateFields.password = await bcrypt.hash(password.trim(), 12);
+        }
+
+        // Verificar duplicados de email/matrícula en OTRO usuario
+        if (updateFields.email || updateFields.matricula) {
+            const conflict = await User.findOne({
+                _id: { $ne: id },
+                $or: [
+                    ...(updateFields.email ? [{ email: updateFields.email }] : []),
+                    ...(updateFields.matricula ? [{ matricula: updateFields.matricula }] : []),
+                ],
+            });
+            if (conflict) {
+                return res.status(409).json({
+                    success: false,
+                    message: 'Ya existe otro usuario con ese email o matrícula.',
+                });
+            }
+        }
+
+        const updated = await User.findByIdAndUpdate(
+            id,
+            { $set: updateFields },
+            { new: true, runValidators: true, select: '-password' }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Usuario actualizado correctamente.',
+            data: updated,
+        });
+
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map((e) => e.message);
+            return res.status(422).json({ success: false, message: messages.join(' | ') });
+        }
+        console.error('Error en updateUser:', error);
         return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
     }
 };
@@ -105,7 +158,6 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Buscar usuario por matrícula y rol
         const user = await User.findOne({ matricula, rol: rol.toUpperCase() });
 
         if (!user) {
@@ -115,7 +167,6 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Verificar contraseña
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({
@@ -124,14 +175,12 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Generar JWT
         const token = jwt.sign(
             { id: user._id, rol: user.rol, nombre: user.nombre },
             process.env.JWT_SECRET,
             { expiresIn: '8h' }
         );
 
-        // Responder sin la contraseña
         const { password: _, ...userSafe } = user.toObject();
 
         return res.status(200).json({
