@@ -306,30 +306,33 @@ export default function GestionMaterias() {
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={4}>
                                     <FormControl fullWidth size="small">
-                                        <InputLabel sx={{ fontFamily: fontText }}>Carrera</InputLabel>
+                                        <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Carrera</InputLabel>
                                         <Select value={filtCarrera} onChange={e => setFiltCarrera(e.target.value)} label="Carrera"
+                                            notched displayEmpty
                                             sx={{ fontFamily: fontText, borderRadius: 2 }}>
-                                            <MenuItem value="" sx={{ fontFamily: fontText }}>Todas</MenuItem>
+                                            <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Todas las carreras</MenuItem>
                                             {CARRERAS_UTSH.map(c => <MenuItem key={c} value={c} sx={{ fontFamily: fontText }}>{c}</MenuItem>)}
                                         </Select>
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={6} sm={2}>
                                     <FormControl fullWidth size="small">
-                                        <InputLabel sx={{ fontFamily: fontText }}>Cuatrimestre</InputLabel>
+                                        <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Cuatrimestre</InputLabel>
                                         <Select value={filtCuatri} onChange={e => setFiltCuatri(e.target.value)} label="Cuatrimestre"
+                                            notched displayEmpty
                                             sx={{ fontFamily: fontText, borderRadius: 2 }}>
-                                            <MenuItem value="" sx={{ fontFamily: fontText }}>Todos</MenuItem>
+                                            <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Todos</MenuItem>
                                             {CUATRIMESTRES.map(n => <MenuItem key={n} value={String(n)} sx={{ fontFamily: fontText }}>{n}°</MenuItem>)}
                                         </Select>
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={6} sm={4}>
                                     <FormControl fullWidth size="small">
-                                        <InputLabel sx={{ fontFamily: fontText }}>Docente</InputLabel>
+                                        <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Docente</InputLabel>
                                         <Select value={filtDocente} onChange={e => setFiltDocente(e.target.value)} label="Docente"
+                                            notched displayEmpty
                                             sx={{ fontFamily: fontText, borderRadius: 2 }}>
-                                            <MenuItem value="" sx={{ fontFamily: fontText }}>Todos</MenuItem>
+                                            <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Todos los docentes</MenuItem>
                                             {docentes.map(d => <MenuItem key={d._id} value={d._id} sx={{ fontFamily: fontText }}>{d.nombre}</MenuItem>)}
                                         </Select>
                                     </FormControl>
@@ -421,28 +424,28 @@ export default function GestionMaterias() {
                                 </Typography>
 
                                 <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                                    <InputLabel sx={{ fontFamily: fontText }}>Carrera</InputLabel>
+                                    <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Carrera</InputLabel>
                                     <Select value={consultaCarrera} onChange={e => { setConsultaCarrera(e.target.value); setAlumnosGrupo([]); }}
-                                        label="Carrera" sx={{ fontFamily: fontText, borderRadius: 2 }}>
-                                        <MenuItem value="" sx={{ fontFamily: fontText }}>Selecciona carrera</MenuItem>
+                                        label="Carrera" notched displayEmpty sx={{ fontFamily: fontText, borderRadius: 2 }}>
+                                        <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona carrera</MenuItem>
                                         {CARRERAS_UTSH.map(c => <MenuItem key={c} value={c} sx={{ fontFamily: fontText }}>{c}</MenuItem>)}
                                     </Select>
                                 </FormControl>
 
                                 <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                                    <InputLabel sx={{ fontFamily: fontText }}>Cuatrimestre</InputLabel>
+                                    <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Cuatrimestre</InputLabel>
                                     <Select value={consultaCuatri} onChange={e => { setConsultaCuatri(e.target.value); setAlumnosGrupo([]); }}
-                                        label="Cuatrimestre" sx={{ fontFamily: fontText, borderRadius: 2 }}>
-                                        <MenuItem value="" sx={{ fontFamily: fontText }}>Selecciona cuatrimestre</MenuItem>
+                                        label="Cuatrimestre" notched displayEmpty sx={{ fontFamily: fontText, borderRadius: 2 }}>
+                                        <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona cuatrimestre</MenuItem>
                                         {CUATRIMESTRES.map(n => <MenuItem key={n} value={String(n)} sx={{ fontFamily: fontText }}>{n}°</MenuItem>)}
                                     </Select>
                                 </FormControl>
 
                                 <FormControl fullWidth size="small" sx={{ mb: 2.5 }}>
-                                    <InputLabel sx={{ fontFamily: fontText }}>Grupo (opcional)</InputLabel>
+                                    <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: 'white', px: 0.5 }}>Grupo (opcional)</InputLabel>
                                     <Select value={consultaGrupo} onChange={e => { setConsultaGrupo(e.target.value); setAlumnosGrupo([]); }}
-                                        label="Grupo (opcional)" sx={{ fontFamily: fontText, borderRadius: 2 }}>
-                                        <MenuItem value="" sx={{ fontFamily: fontText }}>Todos los grupos</MenuItem>
+                                        label="Grupo (opcional)" notched displayEmpty sx={{ fontFamily: fontText, borderRadius: 2 }}>
+                                        <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Todos los grupos</MenuItem>
                                         {GRUPOS.map(g => <MenuItem key={g} value={g} sx={{ fontFamily: fontText }}>Grupo {g}</MenuItem>)}
                                     </Select>
                                 </FormControl>
@@ -592,52 +595,72 @@ export default function GestionMaterias() {
                     <Typography sx={{ fontFamily: fontText, fontWeight: 700, fontSize: '1.4rem' }}>Nueva Materia</Typography>
                 </Box>
                 <DialogContent sx={{ px: 4, py: 3, bgcolor: '#fafafa' }}>
-                    <Grid container spacing={2}>
-                        {[
-                            { name: 'nombre', label: 'Nombre de la materia', sm: 12 },
-                            { name: 'codigo', label: 'Código (ej. TI-WEB-01)', sm: 6 },
-                            { name: 'horasSemanales', label: 'Horas semanales', sm: 6, type: 'number' },
-                        ].map(f => (
-                            <Grid item xs={12} sm={f.sm} key={f.name}>
-                                <TextField fullWidth size="small" label={f.label} name={f.name}
-                                    type={f.type || 'text'} value={formMateria[f.name]}
-                                    onChange={e => setFormMateria({ ...formMateria, [e.target.name]: e.target.value })}
-                                    InputLabelProps={{ style: { fontFamily: fontText } }}
-                                    InputProps={{ style: { fontFamily: fontText } }}
-                                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'white' } }} />
-                            </Grid>
-                        ))}
+                    <Grid container spacing={2.5}>
 
-                        {/* Carrera de alumnos */}
+                        {/* Nombre — fila completa */}
+                        <Grid item xs={12}>
+                            <TextField fullWidth size="small" label="Nombre de la materia" name="nombre"
+                                value={formMateria.nombre}
+                                onChange={e => setFormMateria({ ...formMateria, nombre: e.target.value })}
+                                InputLabelProps={{ style: { fontFamily: fontText } }}
+                                InputProps={{ style: { fontFamily: fontText } }}
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'white' } }} />
+                        </Grid>
+
+                        {/* Código + Horas */}
+                        <Grid item xs={7}>
+                            <TextField fullWidth size="small" label="Código (ej. TI-WEB-01)" name="codigo"
+                                value={formMateria.codigo}
+                                onChange={e => setFormMateria({ ...formMateria, codigo: e.target.value })}
+                                InputLabelProps={{ style: { fontFamily: fontText } }}
+                                InputProps={{ style: { fontFamily: fontText } }}
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'white' } }} />
+                        </Grid>
+                        <Grid item xs={5}>
+                            <TextField fullWidth size="small" label="Horas semanales" name="horasSemanales"
+                                type="number" value={formMateria.horasSemanales}
+                                onChange={e => setFormMateria({ ...formMateria, horasSemanales: e.target.value })}
+                                InputLabelProps={{ style: { fontFamily: fontText } }}
+                                InputProps={{ style: { fontFamily: fontText }, inputProps: { min: 1, max: 20 } }}
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'white' } }} />
+                        </Grid>
+
+                        {/* Carrera — fila completa */}
                         <Grid item xs={12}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Carrera</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Carrera</InputLabel>
                                 <Select name="carrera" value={formMateria.carrera} label="Carrera"
+                                    notched displayEmpty
                                     onChange={e => setFormMateria({ ...formMateria, carrera: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona una carrera</MenuItem>
                                     {CARRERAS_UTSH.map(c => <MenuItem key={c} value={c} sx={{ fontFamily: fontText }}>{c}</MenuItem>)}
                                 </Select>
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={6}>
+                        {/* Cuatrimestre + Docente */}
+                        <Grid item xs={12} sm={5}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Cuatrimestre</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Cuatrimestre</InputLabel>
                                 <Select name="cuatrimestre" value={formMateria.cuatrimestre} label="Cuatrimestre"
+                                    notched displayEmpty
                                     onChange={e => setFormMateria({ ...formMateria, cuatrimestre: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona</MenuItem>
                                     {CUATRIMESTRES.map(n => <MenuItem key={n} value={n} sx={{ fontFamily: fontText }}>{n}° Cuatrimestre</MenuItem>)}
                                 </Select>
                             </FormControl>
                         </Grid>
 
-                        {/* Docente — muestra especialidad debajo del nombre */}
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={7}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Docente</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Docente</InputLabel>
                                 <Select name="docente" value={formMateria.docente} label="Docente"
+                                    notched displayEmpty
                                     onChange={e => setFormMateria({ ...formMateria, docente: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona un docente</MenuItem>
                                     {docentes.length === 0 && (
                                         <MenuItem disabled sx={{ fontFamily: fontText }}>No hay docentes registrados</MenuItem>
                                     )}
@@ -659,9 +682,9 @@ export default function GestionMaterias() {
                         {okMateria && <Grid item xs={12}><Alert severity="success" sx={{ fontFamily: fontText, borderRadius: 2 }}>{okMateria}</Alert></Grid>}
                     </Grid>
                 </DialogContent>
-                <DialogActions sx={{ px: 4, pb: 3, pt: 2, bgcolor: '#fafafa' }}>
+                <DialogActions sx={{ px: 4, pb: 3, pt: 2, bgcolor: '#fafafa', gap: 1 }}>
                     <Button onClick={() => setOpenMateria(false)} disabled={savingM}
-                        sx={{ fontFamily: fontText, textTransform: 'none', color: '#888', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                        sx={{ fontFamily: fontText, textTransform: 'none', color: '#888', borderRadius: 2, border: '1px solid #e0e0e0', px: 3 }}>
                         Cancelar
                     </Button>
                     <Button onClick={handleCrearMateria} variant="contained" disabled={savingM} fullWidth
@@ -687,15 +710,17 @@ export default function GestionMaterias() {
                 </Box>
 
                 <DialogContent sx={{ px: 4, py: 3, bgcolor: '#fafafa' }}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2.5}>
 
                         {/* Carrera */}
                         <Grid item xs={12}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Carrera</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Carrera</InputLabel>
                                 <Select value={formGrupo.carrera} label="Carrera"
+                                    notched displayEmpty
                                     onChange={e => setFormGrupo({ ...formGrupo, carrera: e.target.value, materiaId: '' })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona una carrera</MenuItem>
                                     {CARRERAS_UTSH.map(c => <MenuItem key={c} value={c} sx={{ fontFamily: fontText }}>{c}</MenuItem>)}
                                 </Select>
                             </FormControl>
@@ -704,10 +729,12 @@ export default function GestionMaterias() {
                         {/* Cuatrimestre */}
                         <Grid item xs={6}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Cuatrimestre</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Cuatrimestre</InputLabel>
                                 <Select value={formGrupo.cuatrimestre} label="Cuatrimestre"
+                                    notched displayEmpty
                                     onChange={e => setFormGrupo({ ...formGrupo, cuatrimestre: e.target.value, materiaId: '' })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona</MenuItem>
                                     {CUATRIMESTRES.map(n => <MenuItem key={n} value={String(n)} sx={{ fontFamily: fontText }}>{n}°</MenuItem>)}
                                 </Select>
                             </FormControl>
@@ -716,11 +743,12 @@ export default function GestionMaterias() {
                         {/* Grupo — opcional */}
                         <Grid item xs={6}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Grupo (opcional)</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Grupo (opcional)</InputLabel>
                                 <Select value={formGrupo.grupo} label="Grupo (opcional)"
+                                    notched displayEmpty
                                     onChange={e => setFormGrupo({ ...formGrupo, grupo: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
-                                    <MenuItem value="" sx={{ fontFamily: fontText }}>Todos los grupos</MenuItem>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Todos los grupos</MenuItem>
                                     {GRUPOS.map(g => <MenuItem key={g} value={g} sx={{ fontFamily: fontText }}>Grupo {g}</MenuItem>)}
                                 </Select>
                             </FormControl>
@@ -729,10 +757,12 @@ export default function GestionMaterias() {
                         {/* Materia — filtrada por carrera+cuatrimestre */}
                         <Grid item xs={12}>
                             <FormControl fullWidth size="small">
-                                <InputLabel sx={{ fontFamily: fontText }}>Materia a inscribir</InputLabel>
+                                <InputLabel shrink sx={{ fontFamily: fontText, bgcolor: '#fafafa', px: 0.5 }}>Materia a inscribir</InputLabel>
                                 <Select value={formGrupo.materiaId} label="Materia a inscribir"
+                                    notched displayEmpty
                                     onChange={e => setFormGrupo({ ...formGrupo, materiaId: e.target.value })}
                                     sx={{ fontFamily: fontText, borderRadius: 2, bgcolor: 'white' }}>
+                                    <MenuItem value="" sx={{ fontFamily: fontText, color: '#aaa' }}>Selecciona una materia</MenuItem>
                                     {materiasFiltroGrupo.length === 0 ? (
                                         <MenuItem disabled sx={{ fontFamily: fontText }}>
                                             No hay materias para esta carrera y cuatrimestre
