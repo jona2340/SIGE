@@ -15,6 +15,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { getStoredUser, logoutUser } from '../service/authService';
 
+// 🚀 1. Importamos la función para obtener el horario
+import { getHorarioDocente } from '../service/horarioService';
+
 const drawerWidth = 260;
 const fontText = '"Montserrat", sans-serif';
 const accentColor = '#42a5f5'; // color acento del docente
@@ -23,17 +26,54 @@ export default function DashboardDocente() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [user, setUser] = useState(null);
     
-    // 🚀 Hooks para navegación
+    // 🚀 2. Nuevos estados para manejar las clases dinámicas
+    const [clasesHoy, setClasesHoy] = useState([]);
+    const [cargandoClases, setCargandoClases] = useState(true);
+    
     const navigate = useNavigate();
     const location = useLocation();
+
+    // 🚀 3. Función para cargar y filtrar las clases del día
+    const cargarClasesDeHoy = async (docente) => {
+        setCargandoClases(true);
+        try {
+            const res = await getHorarioDocente(docente._id);
+            if (res.success && res.data) {
+                const bloques = res.data.bloques || res.data || [];
+                
+                // Obtenemos el nombre del día actual en español
+                const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                const hoy = diasSemana[new Date().getDay()];
+
+                // Filtramos las clases que corresponden a hoy y las ordenamos por hora de inicio
+                const clasesDelDia = bloques
+                    .filter(b => b.dia === hoy)
+                    .sort((a, b) => {
+                        const tiempoA = a.horaInicio.split(':').map(Number);
+                        const tiempoB = b.horaInicio.split(':').map(Number);
+                        return (tiempoA[0] * 60 + tiempoA[1]) - (tiempoB[0] * 60 + tiempoB[1]);
+                    });
+
+                setClasesHoy(clasesDelDia);
+            }
+        } catch (error) {
+            console.error("Error al cargar las clases de hoy:", error);
+        } finally {
+            setCargandoClases(false);
+        }
+    };
 
     useEffect(() => {
         const storedUser = getStoredUser();
         setUser(storedUser);
+        
+        // 🚀 4. Si el usuario existe, llamamos a la función para buscar sus clases
+        if (storedUser?._id) {
+            cargarClasesDeHoy(storedUser);
+        }
     }, []);
 
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-
 
     const drawerContent = (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#1e1e2d', color: 'white' }}>
@@ -41,15 +81,12 @@ export default function DashboardDocente() {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', fontFamily: fontText, letterSpacing: 1, mb: 2 }}>
                     SIGE UTSH
                 </Typography>
-
-                {/* Foto de perfil en el menú lateral */}
                 <Avatar
                     src={user?.fotoPerfil || undefined}
                     sx={{ width: 80, height: 80, border: `3px solid ${accentColor}`, mb: 1, bgcolor: accentColor }}
                 >
                     {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
                 </Avatar>
-
                 <Typography variant="body2" sx={{ color: accentColor, fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>
                     {user?.nombre || 'Cargando...'}
                 </Typography>
@@ -59,7 +96,6 @@ export default function DashboardDocente() {
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
             
-            {/* 🚀 Renderizado del menú lateral */}
             <List sx={{ flexGrow: 1, px: 2, mt: 2 }}>
             </List>
 
@@ -77,9 +113,11 @@ export default function DashboardDocente() {
         </Box>
     );
 
+    // Array de días para mostrar en el título del Card
+    const diaActual = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][new Date().getDay()];
+
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
-            {/* 🚀 AQUÍ ESTÁ EL CAMBIO PRINCIPAL: user={user} */}
             <DocentNavbar handleDrawerToggle={handleDrawerToggle} user={user} drawerWidth={drawerWidth} />
             
             <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
@@ -185,38 +223,51 @@ export default function DashboardDocente() {
                     </Box>
                 </Card>
 
-                {/* Grupos del día */}
+                {/* 🚀 5. Lista de grupos del día ahora es dinámica */}
                 <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
                     <Box sx={{ bgcolor: '#1e1e2d', p: 2.5, color: 'white' }}>
                         <Typography variant="h6" sx={{ fontFamily: fontText, fontWeight: 600, fontSize: '1.1rem' }}>
-                            Grupos de Hoy
+                            Clases de Hoy ({diaActual})
                         </Typography>
                     </Box>
                     <List sx={{ p: 0 }}>
-                        {[
-                            { materia: 'Desarrollo Web Avanzado', grupo: 'TI-51', hora: '08:00 - 10:00 hrs', aula: 'Laboratorio TI 1' },
-                            { materia: 'Base de Datos Relacionales', grupo: 'TI-32', hora: '10:30 - 12:30 hrs', aula: 'Aula 4' },
-                        ].map((clase, idx) => (
-                            <React.Fragment key={idx}>
-                                <ListItem sx={{ py: 2, px: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
-                                    <Box sx={{ flexGrow: 1 }}>
-                                        <Typography sx={{ fontFamily: fontText, fontWeight: 600, color: '#333' }}>
-                                            {clase.materia} (Grupo {clase.grupo})
-                                        </Typography>
-                                        <Typography sx={{ fontFamily: fontText, color: '#666', fontSize: '0.875rem', mt: 0.5 }}>
-                                            {clase.hora} | {clase.aula}
-                                        </Typography>
-                                    </Box>
-                                    <Button
-                                        variant="outlined"
-                                        startIcon={<PlayArrowIcon />}
-                                        sx={{ fontFamily: fontText, textTransform: 'none', color: '#1e1e2d', borderColor: '#1e1e2d', borderRadius: 2 }}>
-                                        Pasar Lista
-                                    </Button>
-                                </ListItem>
-                                {idx === 0 && <Divider />}
-                            </React.Fragment>
-                        ))}
+                        {cargandoClases ? (
+                            // Muestra skeletons mientras carga la información de la base de datos
+                            <Box sx={{ p: 3 }}>
+                                <Skeleton variant="rectangular" height={60} sx={{ mb: 2, borderRadius: 2 }} />
+                                <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2 }} />
+                            </Box>
+                        ) : clasesHoy.length > 0 ? (
+                            // Mapea las clases reales del día de hoy
+                            clasesHoy.map((clase, idx) => (
+                                <React.Fragment key={clase._id || idx}>
+                                    <ListItem sx={{ py: 2, px: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
+                                        <Box sx={{ flexGrow: 1 }}>
+                                            <Typography sx={{ fontFamily: fontText, fontWeight: 600, color: '#333' }}>
+                                                {clase.materia?.nombre || 'Materia'} (Grupo {clase.grupo})
+                                            </Typography>
+                                            <Typography sx={{ fontFamily: fontText, color: '#666', fontSize: '0.875rem', mt: 0.5 }}>
+                                                {clase.horaInicio} - {clase.horaFin} hrs | Aula: {clase.aula || 'Por asignar'}
+                                            </Typography>
+                                        </Box>
+                                        <Button
+                                            variant="outlined"
+                                            startIcon={<PlayArrowIcon />}
+                                            sx={{ fontFamily: fontText, textTransform: 'none', color: '#1e1e2d', borderColor: '#1e1e2d', borderRadius: 2 }}>
+                                            Pasar Lista
+                                        </Button>
+                                    </ListItem>
+                                    {idx < clasesHoy.length - 1 && <Divider />}
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            // Mensaje en caso de que no haya clases este día
+                            <Box sx={{ p: 4, textAlign: 'center' }}>
+                                <Typography sx={{ fontFamily: fontText, color: '#666', fontWeight: 500 }}>
+                                    No tienes clases programadas para el día de hoy.
+                                </Typography>
+                            </Box>
+                        )}
                     </List>
                 </Card>
             </Box>

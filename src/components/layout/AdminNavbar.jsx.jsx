@@ -98,14 +98,6 @@ export default function AdminNavbar({ handleDrawerToggle, drawerWidth = 260 }) {
 
                 {/* Derecha: notificaciones + perfil */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Tooltip title="Notificaciones">
-                        <IconButton sx={{ color: '#666' }}>
-                            <Badge badgeContent={3} color="warning">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                    </Tooltip>
-
                     <Box onClick={e => setAnchorEl(e.currentTarget)} sx={{
                         display: 'flex', alignItems: 'center', gap: 1.5,
                         cursor: 'pointer', px: 1.5, py: 0.8, borderRadius: 2,

@@ -57,11 +57,17 @@ export default function MisMaterias() {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', fontFamily: fontText, letterSpacing: 1, mb: 2 }}>
                     SIGE UTSH
                 </Typography>
-                <Avatar src={user?.fotoPerfil || undefined} sx={{ width: 80, height: 80, border: '3px solid #00897b', mb: 1, bgcolor: '#00897b' }}>
+                <Avatar
+                    src={user?.fotoPerfil || undefined}
+                    sx={{ width: 80, height: 80, border: '3px solid #00897b', mb: 1, bgcolor: '#00897b' }}
+                >
                     {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
                 </Avatar>
                 <Typography variant="body2" sx={{ color: '#00897b', fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>
                     {user?.nombre || 'Cargando...'}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#aaa', fontFamily: fontText }}>
+                    {user?.matricula || ''}
                 </Typography>
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
@@ -120,7 +126,7 @@ export default function MisMaterias() {
                                 // 🚀 Lógica para calificación y estado
                                 const calActual = inscripcion.calificacion ?? '—';
                                 const estadoCfg = ESTADO_CONFIG[inscripcion.estado] || ESTADO_CONFIG.ACTIVA;
-                                
+
                                 // Determinar color del texto de la calificación
                                 const gradeColor = typeof calActual === 'number'
                                     ? calActual >= 7 ? '#2e7d32' : '#c62828'
@@ -128,11 +134,11 @@ export default function MisMaterias() {
 
                                 return (
                                     <Grid item xs={12} sm={6} md={4} key={inscripcion._id}>
-                                        <Card sx={{ 
-                                            borderRadius: 3, 
-                                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)', 
-                                            borderTop: '4px solid #00897b', 
-                                            height: '100%', 
+                                        <Card sx={{
+                                            borderRadius: 3,
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                                            borderTop: '4px solid #00897b',
+                                            height: '100%',
                                             p: 2,
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -174,12 +180,12 @@ export default function MisMaterias() {
                                             </Box>
 
                                             {/* 🚀 Nueva sección inferior: Estado y Calificación */}
-                                            <Box sx={{ 
-                                                display: 'flex', 
-                                                justifyContent: 'space-between', 
-                                                alignItems: 'center', 
-                                                bgcolor: '#f8f9fa', 
-                                                p: 1.5, 
+                                            <Box sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                bgcolor: '#f8f9fa',
+                                                p: 1.5,
                                                 borderRadius: 2,
                                                 mt: 'auto' // Empuja esto hacia el fondo de la tarjeta
                                             }}>
@@ -190,12 +196,12 @@ export default function MisMaterias() {
                                                     <Chip
                                                         label={estadoCfg.label}
                                                         size="small"
-                                                        sx={{ 
-                                                            fontFamily: fontText, 
-                                                            fontWeight: 700, 
-                                                            fontSize: '0.7rem', 
-                                                            bgcolor: estadoCfg.bg, 
-                                                            color: estadoCfg.color, 
+                                                        sx={{
+                                                            fontFamily: fontText,
+                                                            fontWeight: 700,
+                                                            fontSize: '0.7rem',
+                                                            bgcolor: estadoCfg.bg,
+                                                            color: estadoCfg.color,
                                                             border: `1px solid ${estadoCfg.color}30`,
                                                             height: 22
                                                         }}
@@ -205,12 +211,12 @@ export default function MisMaterias() {
                                                     <Typography sx={{ fontFamily: fontText, fontSize: '0.7rem', fontWeight: 700, color: '#888', mb: 0.5, letterSpacing: 0.5 }}>
                                                         CALIFICACIÓN
                                                     </Typography>
-                                                    <Typography sx={{ 
-                                                        fontFamily: fontText, 
-                                                        fontWeight: 800, 
-                                                        fontSize: '1.4rem', 
+                                                    <Typography sx={{
+                                                        fontFamily: fontText,
+                                                        fontWeight: 800,
+                                                        fontSize: '1.4rem',
                                                         lineHeight: 1,
-                                                        color: gradeColor 
+                                                        color: gradeColor
                                                     }}>
                                                         {calActual}
                                                     </Typography>

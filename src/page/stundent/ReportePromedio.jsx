@@ -117,11 +117,17 @@ export default function ReportePromedio() {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', fontFamily: fontText, letterSpacing: 1, mb: 2 }}>
                     SIGE UTSH
                 </Typography>
-                <Avatar src={user?.fotoPerfil || undefined} sx={{ width: 80, height: 80, border: '3px solid #00897b', mb: 1, bgcolor: '#00897b' }}>
+                <Avatar
+                    src={user?.fotoPerfil || undefined}
+                    sx={{ width: 80, height: 80, border: '3px solid #00897b', mb: 1, bgcolor: '#00897b' }}
+                >
                     {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
                 </Avatar>
                 <Typography variant="body2" sx={{ color: '#00897b', fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>
                     {user?.nombre || 'Cargando...'}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#aaa', fontFamily: fontText }}>
+                    {user?.matricula || ''}
                 </Typography>
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />

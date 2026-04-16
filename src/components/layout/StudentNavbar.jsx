@@ -91,11 +91,6 @@ export default function StudentNavbar({ handleDrawerToggle, user, drawerWidth = 
 
                 {/* Derecha: notificaciones + perfil */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-                    <Tooltip title="Notificaciones">
-                        <IconButton sx={{ color: '#666' }}>
-                            <Badge badgeContent={3} color="error"><NotificationsIcon /></Badge>
-                        </IconButton>
-                    </Tooltip>
 
                     <Box onClick={handleClick} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer', padding: '4px 8px', borderRadius: '8px', '&:hover': { bgcolor: '#f3f4f6' } }}>
                         <Box sx={{ textAlign: 'right', display: { xs: 'none', md: 'block' } }}>

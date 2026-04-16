@@ -205,7 +205,7 @@ export default function HorarioDocente() {
                     {!user?.fotoPerfil && user?.nombre ? user.nombre.charAt(0).toUpperCase() : ''}
                 </Avatar>
                 <Typography variant="body2" sx={{ color: '#7986cb', fontFamily: fontText, mt: 0.5, fontWeight: 600 }}>{user?.nombre || 'Cargando...'}</Typography>
-                <Typography variant="caption" sx={{ color: '#aaa', fontFamily: fontText }}>{user?.matricula || ''}</Typography>
+                <Typography variant="caption" sx={{ color: '#aaa', fontFamily: fontText }}>{user?.departamento || ''}</Typography>
             </Box>
             <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
             <Box sx={{ flexGrow: 1 }} />

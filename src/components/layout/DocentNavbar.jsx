@@ -82,11 +82,6 @@ export default function DocentNavbar({ handleDrawerToggle, user, drawerWidth = 2
 
                 {/* Derecha: notificaciones + perfil dinámico */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-                    <Tooltip title="Notificaciones">
-                        <IconButton sx={{ color: '#666' }}>
-                            <Badge badgeContent={5} color="error"><NotificationsIcon /></Badge>
-                        </IconButton>
-                    </Tooltip>
 
                     <Box onClick={handleClick} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer', padding: '4px 8px', borderRadius: '8px', '&:hover': { bgcolor: '#f3f4f6' } }}>
                         <Box sx={{ textAlign: 'right', display: { xs: 'none', md: 'block' } }}>

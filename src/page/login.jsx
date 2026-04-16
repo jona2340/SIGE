@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import {
     Box, Card, CardContent, Typography, TextField,
-    Button, ToggleButton, ToggleButtonGroup
+    Button, ToggleButton, ToggleButtonGroup,
+    InputAdornment, IconButton // Importamos estos para el icono
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SchoolIcon from '@mui/icons-material/School';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+// Importamos los iconos de ojo
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { sigeStyles } from '../styles/sigeStyles';
 import { loginUser } from '../service/authService';
@@ -29,19 +33,25 @@ export default function Login() {
     const [formData, setFormData] = useState({ usuario: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    
+    // 1. Nuevo estado para mostrar/ocultar contraseña
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
+
+    // Función para alternar la visibilidad
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     const handleRoleChange = (event, newRole) => {
         if (newRole !== null) {
             setRole(newRole);
-            setError(''); // limpiar error al cambiar rol
+            setError(''); 
         }
     };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        if (error) setError(''); // limpiar error al escribir
+        if (error) setError(''); 
     };
 
     const handleSubmit = async (e) => {
@@ -55,14 +65,9 @@ export default function Login() {
                 formData.password,
                 ROL_MAP[role]
             );
-
-            // Guardar sesión en localStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-
-            // Redirigir al dashboard correspondiente
             navigate(ROUTE_MAP[role]);
-
         } catch (err) {
             setError(err.message);
         } finally {
@@ -144,19 +149,35 @@ export default function Login() {
                             <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'block', mb: 1, fontFamily: fontText }}>
                                 Contraseña
                             </Typography>
+                            
+                            {/* TextField de contraseña actualizado */}
                             <TextField
                                 fullWidth
-                                type="password"
+                                // 2. El tipo cambia dinámicamente
+                                type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 placeholder="Ingresa tu contraseña"
                                 value={formData.password}
                                 onChange={handleChange}
                                 disabled={loading}
                                 sx={{ mb: 2, ...sigeStyles.inputField }}
-                                InputProps={{ style: { fontFamily: fontText } }}
+                                // 3. Agregamos el icono al final (endAdornment)
+                                InputProps={{
+                                    style: { fontFamily: fontText },
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
                             />
 
-                            {/* Mensaje de error del backend */}
                             {error && (
                                 <Box sx={{ bgcolor: '#fdecea', border: '1px solid #f5c6cb', borderRadius: 2, px: 2, py: 1.5, mb: 2 }}>
                                     <Typography variant="body2" sx={{ color: '#d32f2f', fontFamily: fontText, fontWeight: 500 }}>
